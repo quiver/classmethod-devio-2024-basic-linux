@@ -1,8 +1,8 @@
 ## シグナルとは
 
-シグナルは、実行中のプロセスの外から(非)同期な割り込みイベント処理を行えます。
+シグナルを利用すると、実行中のプロセスに外から(非)同期な割り込みイベント処理を行えます。
 
-処理内容によってシグナルを分けることで、Webサーバーの再起動のような処理がプロセス外から行えます。
+Webサーバーの停止や再起動のような処理や、Ctrl-Cでプログラムを止める処理などがシグナルの利用例です。
 
 シグナル送信時には `kill` コマンドでプロセスとシグナル(番号、または、名前)を指定します。
 
@@ -36,7 +36,7 @@ $ kill -signal_number pid
 
 フォアグラウンド実行しているプログラムを <Ctrl-C> で止めるのは、 `SIGINT` シグナルを送信していることと同じです。
 
-`strace` というシステムコール(Linuxカーネル=OSの低レイヤーで行われる処理)やシグナルをトレースするプログラム経由で `yes` を走らせてみます。
+`strace` というシステムコール(Linuxカーネル=OSの低レイヤーで行われる処理)やシグナルをトレースするプログラム経由で `yes` を走らせ、Ctrol-Cで矯正終了してみましょう。
 
 ```
 $ strace -ff -e trace=signal -o strace_output yes
@@ -46,16 +46,21 @@ y
 y
 ^C
 
+$ ls
+strace_output.4275
+
 $ cat strace_output.4275
 --- SIGINT {si_signo=SIGINT, si_code=SI_KERNEL} ---
 +++ killed by SIGINT +++
 ```
 
-確かに、 `SIGINT` シグナルを受け取っています。
+Ctrl-Cで `SIGINT` シグナルが発火され、`yes` プロセスが停止されてことがわかります。
 
 ## Apacheのシグナルの利用例
 
-Apacheの場合、プロセスの停止・再起動それぞれに対して、処理中のリクエストの終了をまつ場合("gracefulに処理する"と呼びます)と待たない場合で`TERM`/`USR1`/`HUP`/`WINCH`の4種類のシグナルが用意されています。
+Apacheの場合、プロセスの停止や再起動はシグナル経由で行われます。
+
+さらに、処理中のリクエストの終了を待つ場合("gracefulに処理する"と呼びます)と待たない場合で異なるシグナルが用意されています。
 
 | シグナル | graceful? | 処理 | apachectlコマンド |
 | --- | --- | --- | --- |
@@ -64,7 +69,7 @@ Apacheの場合、プロセスの停止・再起動それぞれに対して、�
 | TERM |  | 停止 | apachectl -k stop |
 | WINCH | graceful | 停止 | apachectl -k graceful-stop |
 
-特に、`systemd` 経由でApacheを stop/restart すると(つまり、デフォルトの stop/restart)、graceful に処理されます。
+特に、プロセスを管理する `systemd` 経由でApacheを stop/restart すると(つまり、デフォルトの stop/restart)、graceful に処理されます。
 
 ```
 $ sudo systemctl reload apache2.service
@@ -102,7 +107,7 @@ Jul 10 06:58:44 ip-172-31-34-13 systemd[1]: Reloaded The Apache HTTP Server.
 
 ## AWSのロードバランサーのgracefulな処理
 
-AWSのロードバランサー(ELB)も処理中のリクエストの終了をまつ graceful な処理が実装されています(`draining`で検索しましょう)。
+AWSのロードバランサー(ELB)も処理中のリクエストの終了を待つ graceful な処理が実装されています(`draining`で検索しましょう)。
 
 ロードバランサーのターゲットから解除されたサーバーは、新規リクエストを受け付けず、既存のリクエストだけを処理する draining状態になり、一定期間後は強制的にリスエストが終了されます。
 
@@ -170,12 +175,11 @@ ECS はタスクに対してまず `SIGTERM` で正常終了を促し、それ�
 
 [ECS のアプリケーションを正常にシャットダウンする方法 | Amazon Web Services ブログ](https://aws.amazon.com/jp/blogs/news/graceful-shutdowns-with-ecs/)
 
-
 ## (発展)Amazon ECS以外でのシグナルの類似機能の応用例
 
 負荷に応じてEC2インスタンスをスケールさせるAmazon EC2 Auto Scalingや未使用のEC2キャパシティを安く活用するEC2スポットインスタンスは、インスタンスの停止や中断を伴うため、ステートレスに実装する必要があります。
 
-このような予告に対して、クリーンアップする処理はまさに、シグナルのSIGTERMと同じ発想です。
+このような予告に対して、クリーンアップする処理はまさに、シグナルの`SIGTERM`と同じ発想です。
 
 EC2 AutoScalingのライフサイクルフックやスポットインスタンスの中断イベントを調べてみましょう。
 
@@ -184,18 +188,20 @@ EC2 AutoScalingのライフサイクルフックやスポットインスタン�
 
 ## 最難関:シグナルの安全性
 
-様々なスレッド･プロセスから(非)同期に呼び出されるシグナルハンドラー内の処理には大きな制約があり、この制約が守られないと、今回のregreSSHion(⁠CVE-2024-6387)のようなシグナルハンドがの競合状態といった脆弱性に繋がります。
+様々なスレッド･プロセスから呼び出されるシグナルハンドラー内の処理には大きな制約があり、この制約が守られないと、今回のregreSSHion(⁠CVE-2024-6387)のようなにシグナルハンドラー内で競合状態が発生し、脆弱性に繋がりるリスクがあります。
 
-非同期シグナルにおいて、シグナルハンドラー内で呼び出しても大丈夫な関数は非同期シグナル安全関数(async-signal-safe function)と呼ばれ、`write()`, `wait()`, `signal()` などがあります。
+非同期シグナルにおいて、シグナルハンドラー内で呼び出しても大丈夫な関数は **非同期シグナル安全関数(async-signal-safe function)** と呼ばれ、`write()`, `wait()`, `signal()` などがあります。
 
 安全でない関数の代表例が、最も基本的な関数の一つである `printf()` です。
 
 複数のスレッド･プロセスから同時に呼び出されても、正しく動作する関数を再入可能(reentrant)関数と呼びます。
-バッファやヒープなどのグローバルなデータを使っていると、再入不可能となります。
+関数がバッファやヒープなどのグローバルなデータを使っていると、再入不可能となります。
 
-`printf()`は一見すると reentrant に見えますが、内部でグローバルなバッファを操作しているため、 再入可能ではりません(non-reentrant)。
+一見すると、`printf()`は reentrant に見えますが、内部でグローバルなバッファを操作しているため、 再入可能ではりません(non-reentrant)。
 
-`$ man 7 signal-safety` を読んでみましょう。
+`$ man 7 signal-safety` を読んでみましょう。`man` ページの冒頭を引用します。
+
+> An  async-signal-safe  function  is one that can be safely called from within a signal handler.  Many functions are not async-signal-safe.  In particular, nonreentrant functions are generally unsafe to call from a signal handler.
 
 参考
 

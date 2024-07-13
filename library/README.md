@@ -1,18 +1,8 @@
-## 学ぶこと
-
-- ライブラリ
-- glibc
-- 静的・動的
-- gcc/file/ldd/stringsコマンド
-
 ## ライブラリとは?
 
-多くのプログラミング言語は、文字列処理やファイル操作やネットワーク通信をカンタンに行うためのライブラリを提供
-
+プログラミング言語は、文字列処理やファイル操作やネットワーク通信のような頻出操作をかんたnに行うためのライブラリを提供
 
 ## C言語とglibcの関係
-
-Linux OS自身や主要プログラムはC言語で書かれています。
 
 C言語の場合、ISOで標準ライブラリが定められています。
 
@@ -22,7 +12,7 @@ Linuxでは、 `man` コマンドでシステムリファレンスマニュア�
 コマンドから `$ man glibc` を実行しましょう
 
 ```
-$ man 7 libc
+$ man glibc  # あるいは $ man 7 libc
 
 
 libc(7)                                            Miscellaneous Information Manual                                           libc(7)
@@ -48,9 +38,30 @@ DESCRIPTION
 
 man ページは `q` で終了できます。
 
-## C
+## 補足:man について
 
-Cの hello worldプログラムでライブラリの利用を確認します。
+Linuxでは、 `man` コマンドでマニュアル(**man**nual)を読めます。
+
+マニュアルの種類によって次の1から9のセクションが割り振られ、`$ man section page` というシンタックスで呼び出します。
+
+1.   Executable programs or shell commands
+2.   System calls (functions provided by the kernel)
+3.   Library calls (functions within program libraries)
+4.   Special files (usually found in /dev)
+5.   File formats and conventions, e.g. /etc/passwd
+6.   Games
+7.   Miscellaneous (including macro packages and conventions), e.g. man(7), groff(7), man-pages(7)
+8.   System administration commands (usually only for root)
+9.   Kernel routines [Non standard]
+
+`$ man man` とすると `MAN(1)` に誘導されます。
+これは、`man` はプログラムのため、セクション1に該当することを意味し、`$ man 1 man` と呼び出しても同じです。
+
+ページだけではセクションが一意に定まらない例もあり、`$ man 1 printf` とすると、`printf` コマンドのページが表示され、`$ man 3 printf` とすると、C言語の `printf` 関数のページが表示されます。
+
+## glibc を使ってみる
+
+C言語の hello worldプログラムでライブラリの利用を確認します。
 
 次の `hello.c` ファイルを用意します。
 
@@ -63,28 +74,28 @@ int main() {
 }
 ```
 
-gcc でコンパイルします
+C言語のコンパイラである `gcc` でコンパイルします
 
 ```
 $ gcc hello.c
 $ ls
 a.out  hello.c
-$ ./a.out
+$ ./a.out # 実行ファイル
 hello, world
 ```
 
-Cの実行ファイルの作成は次の2ステップ
+Cの実行ファイルの作成は次の2ステップからなります。
 
 1. ソースコードからオブジェクトファイルの作成
 2. オブジェクトファイルとライブラリのリンク
 
 `$ gcc -o hello hello.c` はこの2処理を1ステップで行っています。
 
-次のように2ステップに分割できます
+次のように2ステップに分割できます:
 
 ```
-$ gcc -c hello.c -o hello.o # ステップ1
-$ gcc hello.o -o hello      # ステップ2
+$ gcc -c hello.c -o hello.o # ステップ1 : オブジェクトファイルの作成
+$ gcc hello.o -o hello      # ステップ2 : オブジェクトファイルとライブラリのリンク
 $ ./hello
 hello, world
 
@@ -95,33 +106,27 @@ $ file hello    # 実行ファイル
 hello: ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, BuildID[sha1]=b3e50f2741351b23a37148846fc2a42a6394f609, for GNU/Linux 3.2.0, not stripped
 ```
 
-特に、オブジェクトファイルやライブラリを結合して一つの実行ファイルに作成するプログラムをリンカと呼びます。
+特に、オブジェクトファイルやライブラリを結合して一つの実行ファイルに作成するプログラムをリンカと呼びます。`ld`(gcc デフォルト)、`lld`(LLVM)、`mold`(`lld`作者による次世代リンカ)などが有名です。
 
-リンカの例
+参考 [『リンカー moldをいろんなターゲットに移植した話』を視聴してCPUやpsABIの世界を覗き見してみた #kernelvm](https://zenn.dev/quiver/articles/7aa6deb2d77e44)
 
-- ld(GNU linkder)
-    - gcc がデフォルトで利用
-- lld
-    - LLVM
-    - clang/Swift などが利用
-- mold(lldの作者による次世代リンカ)
 
 ## 共有ライブラリと静的ライブラリ
 
 ライブラリの利用方法は2種類
 
 - 共有ライブラリ
-    - プログラムがライブラリを参照する
+    - プログラムがライブラリを参照する(動的リンク)
     - 多くのプログラミング言語が採用
     - Linuxだと `.so`ファイル、Windowsだと `.DLL`(Dynamic Link Library)
     - ライブラリとプログラムは1:多の関係
 - 静的ライブラリ
-    - プログラムにライブラリを組み込む
-    - Go言語はデフォルトで静的リンク
+    - プログラムにライブラリを組み込む(静的リンク)
+    - Go言語が採用
 
-### 共有ライブラリを確認
+## 共有ライブラリを確認
 
-`ldd` コマンドでこのプログラムの利用しているライブラリを確認します
+実行ファイルが依存する共有ライブラリは `ldd` プログラムで確認できます(`$ man 1 ldd`)
 
 ```
 $ ldd ./a.out
@@ -130,7 +135,7 @@ $ ldd ./a.out
         /lib64/ld-linux-x86-64.so.2 (0x00007eb1a408e000)
 ```
 
-`.so` は shared objects(共有ライブラリ)のことで、バイナリファイルからテキストを抜き出す `string` コマンドを利用し、この実体が glibc(GNU C Library) であることを確認します。
+`.so` は shared objects(共有ライブラリ)を表し、バイナリファイルからテキストを抜き出す `string` プログラムを利用し、この実体が glibc(GNU C Library) であることを確認します。
 
 ```
 $ strings /lib/x86_64-linux-gnu/libc.so.6 | grep GNU
@@ -138,10 +143,9 @@ GNU C Library (Ubuntu GLIBC 2.39-0ubuntu8.2) stable release version 2.39.
 Compiled by GNU CC version 13.2.0.
 ```
 
-### Goで静的ライブラリを確認
+## Go言語は静的リンク
 
-Go言語は静的リンクすることを確認します。
-
+多くの言語はライブラリを動的リンクしますが、Go言語はデフォルトで静的リンクします。
 
 次の `hello.go` ファイルを用意します。
 
@@ -175,9 +179,11 @@ hello: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), statically linked, G
 
 ## 静的ライブラリのメリット・デメリット
 
-様々なライブラリを利用している場合、実行ファイルを配布するだけよく、依存するライブラリのことを考えなくて済む。
+静的リンクすると実行ファイルを配布するだけ動作し、動的リンク時のように、実行環境でのライブラリの存在を意識しなくてすみます。
 
-一方で、ライブラリをプログラムに直接組み込んでいるので、ファイルサイズが大きくなる。
+一方で、ライブラリをプログラムに直接組み込んでいるので、ファイルサイズが大きくなります。
+
+"hello, world"を表示するだけのC言語とGo言語のファイルサイズを比較します。
 
 ```
 $ ls -lh go/hello c/hello
@@ -185,7 +191,7 @@ $ ls -lh go/hello c/hello
 -rwxrwxr-x 1 ubuntu ubuntu 1.9M Jul  9 04:06 go/hello
 ```
 
-動的リンクのCの16Kに対して、静的リンクのGoは1.9Mと100倍以上の開き
+動的リンクしたC版は16Kなのに対して、静的リンクしたGo版は1.9Mと100倍以上の開きがあります。
 
 ## コンテナでの静的リンクの活用例
 
@@ -233,19 +239,17 @@ COPY --from=0 /bin/hello /bin/hello
 CMD ["/bin/hello"]
 ```
 
-参考
+※ Dockerfileの引用元 https://docs.docker.com/build/building/multi-stage/
 
-- https://docs.docker.com/build/building/multi-stage/
-
-## (発展)CPUアーキテクチャ
+## 発展:CPUアーキテクチャ
 
 現在サーバー市場で主流のCPUはIntel/AMD系(x86)とArm系(arm)の2つの流派があり、CPUアーキテクチャと呼びます。
 
 AWS Gravitionチップや最近のMacはArm系であり、Armより1世代前のMacや市場で入手可能なほとんどのサーバーはx86系です。
 
-Goで作成したバイナリはLinuxならどこでも動くわけではなく、それぞれのCPUアーキテクチャ向けにコンパイルする必要があります。
+GoでコンパイルしたバイナリはLinuxならどこでも動くわけではなく、それぞれのCPUアーキテクチャ向けにコンパイルする必要があります。
 
-## (発展)クロスコンパイル
+## 発展:クロスコンパイル
 
 CPUに限らず、異なるアーキテクチャをターゲットにコンパイルすることをクロスコンパイルと呼びます。
 
@@ -291,4 +295,4 @@ Pythonインタープリターとプログラムの同梱が必要であるこ�
 
 ![](fujiwara_awslim.jpg)
 
-このスライドでは、静的リンクによる起動時間やバイナリサイズやメモリへの影響や、マルチステージビルドのようなテクニックなどが紹介されています。
+このスライドでは、静的リンクによる起動時間やバイナリサイズやメモリへの影響や、マルチステージビルドのようなテクニックなども紹介されています。

@@ -12,7 +12,6 @@
 
 ![](Q-regreSSHion.jpg)
 
-
 脆弱性を発見した Qualys のエンジニアブログでは、regreSSHion について以下のような解説があります。
 
 > The vulnerability, which is a **signal handler race condition** in **OpenSSH’s server (sshd)**, allows unauthenticated remote code execution (RCE) as **root** on **glibc-based** Linux systems; that presents a significant security risk. This **race condition** affects **sshd** in its default configuration.
