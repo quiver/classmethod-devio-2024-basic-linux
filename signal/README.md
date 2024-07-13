@@ -1,4 +1,4 @@
-## シグナルとは
+# シグナルとは?
 
 シグナルを利用すると、実行中のプロセスに外から(非)同期な割り込みイベント処理を行えます。
 
@@ -34,9 +34,9 @@ $ kill -signal_number pid
 | ...<br>y<br>y | $ pgrep yes<br>1850<br>$ kill -SIGTERM 1850 |
 | Terminated<br>$ |  |
 
-フォアグラウンド実行しているプログラムを <Ctrl-C> で止めるのは、 `SIGINT` シグナルを送信していることと同じです。
+フォアグラウンド実行しているプログラムを Ctrl-C で止めるのは、 `SIGINT` シグナルを送信していることと同じです。
 
-`strace` というシステムコール(Linuxカーネル=OSの低レイヤーで行われる処理)やシグナルをトレースするプログラム経由で `yes` を走らせ、Ctrol-Cで矯正終了してみましょう。
+`strace` というシステムコール(Linuxカーネル=OSの低レイヤーで行われる処理)やシグナルをトレースするプログラム経由で `yes` を走らせ、Ctrol-Cで強制終了してみましょう。
 
 ```
 $ strace -ff -e trace=signal -o strace_output yes
@@ -173,7 +173,7 @@ ECS はタスクに対してまず `SIGTERM` で正常終了を促し、それ�
 
 ![](aws-ecs-spot-interruption-draining.png)
 
-[ECS のアプリケーションを正常にシャットダウンする方法 | Amazon Web Services ブログ](https://aws.amazon.com/jp/blogs/news/graceful-shutdowns-with-ecs/)
+[ECS のアプリケーションを正常にシャットダウンする方法 \| Amazon Web Services ブログ](https://aws.amazon.com/jp/blogs/news/graceful-shutdowns-with-ecs/)
 
 ## (発展)Amazon ECS以外でのシグナルの類似機能の応用例
 

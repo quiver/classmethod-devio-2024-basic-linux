@@ -4,7 +4,7 @@
 
 OpenSSH sshdというほぼすべてのLinuxサーバーにインストールされ、頻繁に使用されるSSHのサーバープログラム(`sshd`)に脆弱性(CVE-2024-6387)が発見されました。
 
-[OpenSSH Vulnerability: CVE-2024-6387 FAQs and Resources | Qualys](https://www.qualys.com/regresshion-cve-2024-6387/)
+[OpenSSH Vulnerability: CVE-2024-6387 FAQs and Resources \| Qualys](https://www.qualys.com/regresshion-cve-2024-6387/)
 
 2006年に修正された同じ sshd に関するCVE-2006-5051の回帰(regression)バグであることから、この脆弱性には "regression" と同じ発音で綴りに "SSH" を含めた regreSSHion という名前がつけられました。
 
@@ -19,6 +19,7 @@ regreSSHion の詳細は、次の日本語の解説記事をご確認くださ�
 CVE(Common Vulnerabilities and Exposures)は脆弱性を一意な名前・IDで管理。
 
 > The mission of the CVE® Program is to identify, define, and catalog publicly disclosed cybersecurity vulnerabilities. 
+>
 > https://www.cve.org/About/Overview
 
 今回見つかったOpen sshdの脆弱性の場合、regreSSHion という名前と CVE-2024-6387 という管理番号が割り振られています。

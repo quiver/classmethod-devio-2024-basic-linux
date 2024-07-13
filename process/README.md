@@ -1,11 +1,4 @@
-# プロセス
-
-学ぶこと
-
-- プロセス
-- コンテナにおけるプロセス
-
-### プロセスとは？
+# プロセスとは?
 
 実行中のプログラムのことをプロセスと呼びます。
 
@@ -140,6 +133,10 @@ Twelve-Factor App の VI. プロセスでも "アプリケーションを1つも
 
 OSの上でOSを動かす仮想技術とことなり、コンテナはOSの上で1アプリケーションとして動かします。
 
+![](virtualization-vs-containers_transparent.png)
+
+※ 引用元 https://www.redhat.com/en/topics/containers/containers-vs-vms
+
 コンテナを起動するホストからは、コンテナは1プロセスとして見えていますが、コンテナの内では独立したプロセス空間を持ち、アプリケーションはPID=1で実行されます。
 
 TODO:実行例を表示
@@ -150,6 +147,11 @@ Linuxカーネルの Namespaces という機能が利用されており(PID name
 
 Apacheサーバーを起動というように、新規にプロセスを作成するとき、fork & exec という仕組みが使われます。
 
-プロセスを2つに分裂させ(`fork()`)、片方の中身を起動したいプログラムで書き換えます(`exec()`)。
+プロセスを2つに分裂させ(`fork()`)、片方の中身を起動したいプログラムで書き換えます(`exec()`)。この一連のよくある処理を限定的に実装したのが `posix_spawn()` です。
 
-詳細は『Linuxのしくみ』 2章を参照してください。
+詳細は『Linuxのしくみ』 12章「プロセスにかかわるAPI」を参照してください。
+
+Pythonで子プロセスを作成する subprocess ライブラリをLinuxで実行すると、内部的には `fork()/vfork()/posix_spawn()` が呼ばれています。
+
+参考 : https://docs.python.org/3/library/subprocess.html
+
