@@ -33,13 +33,13 @@ uid=1000(ubuntu) gid=1000(ubuntu) groups=1000(ubuntu),4(adm),20(dialout),24(cdro
 
 `man` には "execute a command as another user" とあります。
 
-一般ユーザーでApacheのりスタートを試みると、権限不足のエラーが発生します。
+一般ユーザーでApacheのリスタートを試みると、権限不足のエラーが発生します。
 ```
 $ systemctl restart apache2
 ==== AUTHENTICATING FOR org.freedesktop.systemd1.manage-units ===
 Authentication is required to restart 'apache2.service'.
 Authenticating as: Ubuntu (ubuntu)
-Password: 
+Password:
 ```
 `sudo` を接頭すると、root ユーザーで実行されるため、リスタートが成功します。
 ```
@@ -151,7 +151,7 @@ Serving HTTP on 0.0.0.0 port 8000 (http://0.0.0.0:8000/) ...
 
 Dockerコンテナではデフォルトでrootユーザーで実行されています。
 
-このようなコンテナは、ホストから見ると、コンテナプロセスがrootで動することになり、ホスト側にエスケープされた場合にホストのroot権限が取得されてしまうことになります。
+このようなコンテナは、ホストから見ると、コンテナプロセスがrootで動作することになり、ホスト側にエスケープされた場合にホストのroot権限が取得されてしまうことになります。
 
 そのため、UIDマッピングやRootlessモードの使用が推奨されます。
 
