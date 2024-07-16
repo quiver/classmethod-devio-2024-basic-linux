@@ -55,7 +55,7 @@ SSHはサーバーの運用やトラブルシュートなどのために大昔�
 コンテナでは、コンテナランタイムがDockerの場合は `docker exec`、Container Runtime Interface (CRI)互換なランタイムの場合は `crictl exec` でシェルアクセス可能です。
 
 ```
-$ crictl exec -i -t 12345 ls
+$ docker exec -it mycontainer /bin/sh
 bin   dev   etc   home  proc  root  sys   tmp   usr   var
 ```
 

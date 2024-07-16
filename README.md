@@ -16,7 +16,7 @@
 
 > The vulnerability, which is a **signal handler race condition** in **OpenSSH’s server (sshd)**, allows unauthenticated remote code execution (RCE) as **root** on **glibc-based** Linux systems; that presents a significant security risk. This **race condition** affects **sshd** in its default configuration.
 >
-> [regreSSHion: Remote Unauthenticated Code Execution Vulnerability in OpenSSH server | Qualys Security Blog](https://blog.qualys.com/vulnerabilities-threat-research/2024/07/01/regresshion-remote-unauthenticated-code-execution-vulnerability-in-openssh-server)
+> [regreSSHion: Remote Unauthenticated Code Execution Vulnerability in OpenSSH server \| Qualys Security Blog](https://blog.qualys.com/vulnerabilities-threat-research/2024/07/01/regresshion-remote-unauthenticated-code-execution-vulnerability-in-openssh-server)
 
 脆弱性の解説記事に現れるこれら Linux OS の関連概念をサーバーレスエンジニア向けに初等的に体験してもらうのが、本ワークショップの狙いです。
 

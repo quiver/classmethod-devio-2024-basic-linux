@@ -139,9 +139,32 @@ OSの上でOSを動かす仮想技術とことなり、コンテナはOSの上�
 
 コンテナを起動するホストからは、コンテナは1プロセスとして見えていますが、コンテナの内では独立したプロセス空間を持ち、アプリケーションはPID=1で実行されます。
 
-TODO:実行例を表示
-
 Linuxカーネルの Namespaces という機能が利用されており(PID namespace)、コンテナを支える非常に重要な機能の一つです。
+
+### (発展)PID Namespaceの実験例
+
+ホストで `sleep 1000`(1000秒sleep)するコンテナを起動
+
+```
+$ docker run -d --name test-sleep ubuntu sleep 1000
+40c31a5befe1ed6d75b990713aaed63d9fd429a450d691f6dce44c3d89ba5429
+```
+
+ホストからコンテナのプロセス(`sleep 1000`) を確認すると、PID = 3055 で動作している
+
+```
+$ docker top test-sleep
+UID                 PID                 PPID                C                   STIME               TTY                 TIME                CMD
+root                3055                3034                0                   14:24               ?                   00:00:00            sleep 1000
+```
+
+コンテナ内からプロセス(`sleep 1000`)を確認すると、PID = 1 で動作している
+```
+$ docker exec -it test-sleep sh -c "ps -ef"
+UID          PID    PPID  C STIME TTY          TIME CMD
+root           1       0  0 14:24 ?        00:00:00 sleep 1000
+root          38       0 40 14:27 pts/0    00:00:00 sh -c ps -e
+```
 
 ## (発展)プロセスの作り方
 

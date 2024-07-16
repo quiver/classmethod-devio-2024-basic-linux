@@ -26,7 +26,7 @@ $ kill -signal_number pid
 
 ## yes プロセスをシグナルで停止
 
-2つのタブを開き、`yes` プロセスに対して、`SIGTERM` シグナルでプロセスを停止してみます。
+ターミナルを2つ開き、`yes` プロセスに対して、`SIGTERM` シグナルでプロセスを停止してみます。
 
 | タブA | タブB |
 | --- | --- |
@@ -139,21 +139,21 @@ while True:
 
 このプログラム(`test_signal.py`)に対して、ハンドリングしているシグナルと、ハンドリングしていないシグナルを送って、処理の違いを確認します。
 
+### ハンドリングしている `SIGINT`が呼び出される例
+
 | タブA | タブB |
 | --- | --- |
 | $ python test_signal.py<br>Ctrl+Cを押してプログラムを終了してください。<br>プログラム実行中...<br>プログラム実行中... |  |
 | プログラム実行中...<br>... | $ pgrep python3<br>4542<br>$ kill -SIGINT 4542 |
 | SIGINTを受け取りました！プログラムを終了します。<br>$ |  |
 
-`SIGINT`に対応するシグナルハンドラーが呼び出されました。
+### ハンドリングしていない `SIGINT`が呼び出される例
 
 | タブA | タブB |
 | --- | --- |
 | $ python test_signal.py<br>Ctrl+Cを押してプログラムを終了してください。<br>プログラム実行中...<br>プログラム実行中... |  |
 | プログラム実行中...<br>... | $ pgrep python3<br>4550<br>$ kill -SIGTERM 4550 |
 | Terminated<br>$ |  |
-
-`SIGINT`に対応するシグナルハンドラーは呼び出されず、一般的な `SIGTERM`の終わり方をしました。
 
 ## コンテナオーケストレーターAmazon ECSでのシグナルの利用例
 
@@ -169,7 +169,8 @@ while True:
 
 ECS はタスクに対してまず `SIGTERM` で正常終了を促し、それでもだめなときは `SIGKILL` で強制終了します。
 
-次のAWS公式ブログでは、このベストプラクティスがALB/ECS/EC2スポットインスタンスの連携を踏まえてより具体的に解説されています。
+余剰キャパシティを活用して安く利用できるスポットインスタンスは、キャパシティに余裕がなくなると、中断の2分前(120秒)に通知されます。
+次のAWS公式ブログでは、スポットインスタンスでECSクラスターを動かしているケースにおいて、スポットの中断通知に対してECSタスクでどのようにシグナルを処理すべきか具体的に解説されています。
 
 ![](aws-ecs-spot-interruption-draining.png)
 
@@ -188,16 +189,28 @@ EC2 AutoScalingのライフサイクルフックやスポットインスタン�
 
 ## 最難関:シグナルの安全性
 
-様々なスレッド･プロセスから呼び出されるシグナルハンドラー内の処理には大きな制約があり、この制約が守られないと、今回のregreSSHion(⁠CVE-2024-6387)のようなにシグナルハンドラー内で競合状態が発生し、脆弱性に繋がりるリスクがあります。
+様々なスレッド･プロセスから呼び出されるシグナルハンドラー内の処理には大きな制約があり、この制約が守られないと、今回のregreSSHion(⁠CVE-2024-6387)のようにシグナルハンドラー内で競合状態が発生し、脆弱性に繋がりるリスクがあります。
 
-非同期シグナルにおいて、シグナルハンドラー内で呼び出しても大丈夫な関数は **非同期シグナル安全関数(async-signal-safe function)** と呼ばれ、`write()`, `wait()`, `signal()` などがあります。
+> **Race conditions** frequently occur in signal handlers, since signal handlers support asynchronous actions. These **race conditions** have a variety of root causes and symptoms. Attackers may be able to **exploit a signal handler race condition** to cause the product state to be corrupted, possibly leading to a denial of service or even code execution.
+> 
+> These issues occur when non-reentrant functions, or state-sensitive actions occur in the signal handler, where they may be called at any time. These behaviors can violate assumptions being made by the "regular" code that is interrupted, or by other signal handlers that may also be invoked. If these functions are called at an inopportune moment - such as while a non-reentrant function is already running - memory corruption could occur that may be **exploitable for code execution**.
+> 
+> [CWE - CWE-364: Signal Handler Race Condition (4.14)](https://cwe.mitre.org/data/definitions/364.html)
 
-安全でない関数の代表例が、最も基本的な関数の一つである `printf()` です。
+非同期シグナルハンドラーは同時に複数回呼び出されても安全に実行されることが求められ、そのためには、ハンドラー内では **非同期シグナル安全関数(async-signal-safe function)** だけを呼び出すひつようがあります。
+そのような関数は、同時に複数の呼び出しから安全に実行できる再入可能(`reentrant`)な性質をもっていたり、シグナルで割り込まれないアトミックな関数です。
 
-複数のスレッド･プロセスから同時に呼び出されても、正しく動作する関数を再入可能(reentrant)関数と呼びます。
-関数がバッファやヒープなどのグローバルなデータを使っていると、再入不可能となります。
+安全な関数の代表例
 
-一見すると、`printf()`は reentrant に見えますが、内部でグローバルなバッファを操作しているため、 再入可能ではりません(non-reentrant)。
+- `write()`
+- `wait()`
+- `signal()`
+
+安全でない関数の代表例
+
+- `printf()`
+- `malloc()`
+- `free()`
 
 `$ man 7 signal-safety` を読んでみましょう。`man` ページの冒頭を引用します。
 
@@ -206,5 +219,5 @@ EC2 AutoScalingのライフサイクルフックやスポットインスタン�
 参考
 
 - [signal-safety(7) - Linux manual page](https://man7.org/linux/man-pages/man7/signal-safety.7.html)
+- [Nonreentrancy (The GNU C Library)](https://www.gnu.org/software/libc/manual/html_node/Nonreentrancy.html)
 - [CWE - CWE-364: Signal Handler Race Condition (4.14)](https://cwe.mitre.org/data/definitions/364.html)
-- [c - Why are malloc() and printf() said as non-reentrant? - Stack Overflow](https://stackoverflow.com/questions/3941271/why-are-malloc-and-printf-said-as-non-reentrant)

@@ -1,17 +1,20 @@
-## TODO:まとめ
+## 学んだことを振り会える
 
-regreSSHion を切り口にLinuxの用語を振り返る
+regreSSHion を切り口にLinuxの世界に足を踏み入れました。
+
+regreSSHion ブログの脆弱性の概要を再掲します。
 
 > The vulnerability, which is a **signal handler race condition** in **OpenSSH’s server (sshd)**, allows unauthenticated remote code execution (RCE) as **root** on **glibc-based** Linux systems; that presents a significant security risk. This **race condition** affects **sshd** in its default configuration.
+>
+> [regreSSHion: Remote Unauthenticated Code Execution Vulnerability in OpenSSH server \| Qualys Security Blog](https://blog.qualys.com/vulnerabilities-threat-research/2024/07/01/regresshion-remote-unauthenticated-code-execution-vulnerability-in-openssh-server)
 
-キーワード回収できた?
+キーワードへの理解は深まったでしょうか?
 
-## 参考
+## 次のステップ
+
+今回のワークショップのような、OSを強く意識した世界に興味をもったなら、以下の書籍がオススメです。
 
 - 武内 覚 著『［試して理解］Linuxのしくみ』(技術評論社, 2022, ISBN 978-4-297-13148-7)
-    - サンプルコードはPython主体です
+    - サンプルコードはPython。コマンドからOSを学ぶ側面が強い。
 - 青木 峰郎著『ふつうのLinuxプログラミング 第2版』(SBクリエイティブ, 2017, ISBN 978-4-7973-8647-9)
-    - サンプルコードはCです
-- 森田 浩平著『基礎から学ぶコンテナセキュリティ』(技術評論社, 2023, ISBN 978-4-297-13635-2)
-    - コンテナ x セキュリティ x 低レイヤーのコンボです
-- [The Twelve-Factor App](https://12factor.net/)
+    - サンプルコードはC。アプリケーション開発からOSを学ぶ側面が強い。
