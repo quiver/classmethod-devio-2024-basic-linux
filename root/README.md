@@ -33,7 +33,9 @@ uid=1000(ubuntu) gid=1000(ubuntu) groups=1000(ubuntu),4(adm),20(dialout),24(cdro
 
 `man` には "execute a command as another user" とあります。
 
-一般ユーザーでApacheのリスタートを試みると、権限不足のエラーが発生します。
+Ubuntuでは systemd というプログラムでプロセス管理されています。
+
+一般ユーザー権限で、この systemd 経由で WebサーバーのApache(nginxの仲間)のリスタートを試みると、権限不足のエラーが発生します。
 ```
 $ systemctl restart apache2
 ==== AUTHENTICATING FOR org.freedesktop.systemd1.manage-units ===
@@ -46,7 +48,6 @@ Password:
 $ sudo systemctl restart apache2
 $
 ```
-
 
 一般には `sudo` コマンド実行時には、ユーザーのパスワードが必要ですが、EC2 Ubuntuの場合は、`ubuntu` ユーザーはパスワード無しに `sudo` をよびだせる設定になっています。
 
@@ -99,7 +100,7 @@ apache2 2535 www-data    4u  IPv6  23786      0t0  TCP *:http (LISTEN)
 
 rootユーザーが80番ポートでApacheを起動し(PID=2529)、そこからの `fork()` で、80番ポート番号のサーバーの起動、及び、 `setuid` で実行ユーザーを root から `www-data` に変更しています。
 
-対応する `ptree` 結果も共有します。
+対応する `pstree` 結果も共有します。
 
 ```
            ├─apache2(2529)─┬─apache2(2531)
@@ -146,6 +147,12 @@ Serving HTTP on :: port 80 (http://[::]:80/) ...
 $ python3 -m http.server 8000
 Serving HTTP on 0.0.0.0 port 8000 (http://0.0.0.0:8000/) ...
 ```
+
+## sudo の利用制限
+
+Amazon EC2のAmazon LinuxやUbuntuでは、初期ユーザーは自由度高く `sudo` を呼び出せて、ルート権限で色々操作できます。
+
+実運用では、どのユーザーに `sudo` を許可するか、どのコマンドを `sudo` と一緒にルート権限で実行できるか、といったことを詰める必要も出てきます。
 
 ## コンテナの実行ユーザー
 
