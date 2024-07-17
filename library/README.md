@@ -276,6 +276,25 @@ $ file ./hello_arm64
 また、Arm系のMacをローカル開発環境にしている人も多く、[GitHub ActionsもArmに対応し](https://github.blog/2024-06-03-arm64-on-github-actions-powering-faster-more-efficient-build-systems/
 )、結果的に、Armでビルドしたものをx86で実行したり、x86でビルドしたものをArmで実行するケースが増えています。
 
+## 発展:スクリプト言語からC等で書かれたバイナリのライブラリを呼ぶときの問題
+
+PythonやRubyのようなスクリプト言語は、基本的には、言語のインタープリターさえインストールされていれば、OSやCPUアーキテクチャーに関係なく実行できます。
+
+しかし、高速化等のために、Cのようなコンパイル言語で実装されたライブラリは、実行環境向けのライブラリが必要です。
+
+例として、同じx86_64のCPUアーキテクチャーでありながら、開発環境がWindowsで実行環境がLinux、同じLinuxかんきょうでありながら、開発環境がx86_64、実行環境がARM64（AArch64）のようなケースが該当します。
+
+そのような場合は、デプロイ時に実行環境向けのパッケージを同梱させる必要があります。
+
+[postgresql - AWS Lambda Importing psycopg2 - Unable to import module 'app': No module named 'psycopg2._psycopg - Stack Overflow](https://stackoverflow.com/questions/74396827/aws-lambda-importing-psycopg2-unable-to-import-module-app-no-module-named)
+
+## 発展:Python LambdaでCバインディングを静的リンクしたはなし
+
+psycopg2 はPostgreSQLクライアント用Cインターフェース libpq のラッパーであり、標準では libpq を動的リンクします。
+AWS Lambda の実行環境では libpq は共有ライブラリとしてインストールされていないため、静的リンクして解決。
+
+[AWS Lambda Pythonからpsycopg2でRDS PostgreSQLに接続する \| DevelopersIO](https://dev.classmethod.jp/articles/build-psycopg2-for-aws-lambda-python/)
+
 ## 発展:動的リンクされたプログラムを静的に再実装
 
 AWSはAPIをコマンドラインから操作するためのAWS CLIというPython製のコマンドラインプログラムを提供しています。
