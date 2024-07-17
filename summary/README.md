@@ -1,4 +1,4 @@
-## 学んだことを振り会える
+## 学んだことを振りかえる
 
 regreSSHion を切り口にLinuxの世界に足を踏み入れました。
 
@@ -8,7 +8,12 @@ regreSSHion ブログの脆弱性の概要を再掲します。
 >
 > [regreSSHion: Remote Unauthenticated Code Execution Vulnerability in OpenSSH server \| Qualys Security Blog](https://blog.qualys.com/vulnerabilities-threat-research/2024/07/01/regresshion-remote-unauthenticated-code-execution-vulnerability-in-openssh-server)
 
-キーワードへの理解は深まったでしょうか?
+- シグナルハンドラーのレースコンディション
+- sshd(SSHサーバー)
+- root権限
+- glibc
+
+これらキーワードへの理解は深まったでしょうか?
 
 ## 次のステップ
 
@@ -18,3 +23,5 @@ regreSSHion ブログの脆弱性の概要を再掲します。
     - サンプルコードはPython。コマンドからOSを学ぶ側面が強い。
 - 青木 峰郎著『ふつうのLinuxプログラミング 第2版』(SBクリエイティブ, 2017, ISBN 978-4-7973-8647-9)
     - サンプルコードはC。アプリケーション開発からOSを学ぶ側面が強い。
+
+本屋で手にとって見てください。

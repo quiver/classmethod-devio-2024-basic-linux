@@ -17,7 +17,13 @@
 
 クラウド(AWS)で実行されるVS Codeのようなものです。
 
-## TODO:手順を追記
+
+## AWS コンソールログイン手順
+
+1. 指定のURLでAWSコンソールにアクセス
+2. ユーザー名、初期パスワードを入力し、新しいパスワードを設定
+
+## Cloud9 構築手順
 
 1. AWS Cloud9へ移動
 1. 東京リージョンを選択
@@ -25,3 +31,13 @@
     - 環境タイプ: 新しい EC2 インスタンス
     - インスタンスタイプ:t3.small
     - プラットフォーム : Ubuntu Server 22.04 LTS
+
+
+## Cloud9 でワークショップコンテンツをGit Clone
+
+```
+~/environment $ git clone https://github.com/quiver/classmethod-devio-2024-basic-linux.git
+...
+~/environment $ ls
+README.md  classmethod-devio-2024-basic-linux
+```

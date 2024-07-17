@@ -178,7 +178,7 @@ ECS はタスクに対してまず `SIGTERM` で正常終了を促し、それ�
 
 ## (発展)Amazon ECS以外でのシグナルの類似機能の応用例
 
-負荷に応じてEC2インスタンスをスケールさせるAmazon EC2 Auto Scalingや未使用のEC2キャパシティを安く活用するEC2スポットインスタンスは、インスタンスの停止や中断を伴うため、ステートレスに実装する必要があります。
+負荷に応じてEC2インスタンスをスケールさせるAmazon EC2 Auto Scalingや未使用のEC2キャパシティを安く活用するEC2スポットインスタンスは、インスタンスの中断を伴うため、ステートレスに実装する必要があります。
 
 このような予告に対して、クリーンアップする処理はまさに、シグナルの`SIGTERM`と同じ発想です。
 
@@ -187,7 +187,7 @@ EC2 AutoScalingのライフサイクルフックやスポットインスタン�
 - [Amazon EC2 Auto Scaling lifecycle hooks - Amazon EC2 Auto Scaling](https://docs.aws.amazon.com/autoscaling/ec2/userguide/lifecycle-hooks.html)
 - [Spot Instance interruptions - Amazon Elastic Compute Cloud](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/spot-interruptions.html)
 
-## 最難関:シグナルの安全性
+## 最難関:シグナルの安全性とレースコンディション
 
 様々なスレッド･プロセスから呼び出されるシグナルハンドラー内の処理には大きな制約があり、この制約が守られないと、今回のregreSSHion(⁠CVE-2024-6387)のようにシグナルハンドラー内で競合状態が発生し、脆弱性に繋がりるリスクがあります。
 

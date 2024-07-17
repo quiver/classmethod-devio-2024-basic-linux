@@ -111,7 +111,7 @@ $ systemctl list-units --type=service --state=running
 
 ![](container.jpeg)
 
-※ [LXD vs Docker | Ubuntu](https://ubuntu.com/blog/lxd-vs-docker) から
+※ [LXD vs Docker \| Ubuntu](https://ubuntu.com/blog/lxd-vs-docker) から
 
 現在主流のアプリケーションコンテナは、APIサーバーなどアプリケーション単位でコンテナ化します。
 コンテナ内で、プロセス管理サービスを起動し、複数プロセスを管理するのはアンチパターンとされています。
@@ -143,28 +143,47 @@ Linuxカーネルの Namespaces という機能が利用されており(PID name
 
 ### (発展)PID Namespaceの実験例
 
-ホストで `sleep 1000`(1000秒sleep)するコンテナを起動
+1000秒間sleep(`sleep 1000`)するコンテナを起動
 
 ```
 $ docker run -d --name test-sleep ubuntu sleep 1000
 40c31a5befe1ed6d75b990713aaed63d9fd429a450d691f6dce44c3d89ba5429
 ```
 
-ホストからコンテナのプロセス(`sleep 1000`) を確認すると、PID = 3055 で動作している
+コンテナ内からプロセス(`sleep 1000`)を確認すると、PID = 1 で動作している
+```
+$ docker exec -it test-sleep ps -ef
+UID          PID    PPID  C STIME TTY          TIME CMD
+root           1       0  0 14:24 ?        00:00:00 sleep 1000
+root          38       0 40 14:27 pts/0    00:00:00 ps -ef
+```
+
+ホストからコンテナのプロセス(`sleep 1000`) を確認すると、PID = 2194 で動作している
 
 ```
 $ docker top test-sleep
 UID                 PID                 PPID                C                   STIME               TTY                 TIME                CMD
-root                3055                3034                0                   14:24               ?                   00:00:00            sleep 1000
+root                2216                2194                0                   14:24               ?                   00:00:00            sleep 1000
+
+
+$ pstree -p
+systemd(1)─┬─acpid(365)
+           ...
+           ├─containerd-shim(2194)─┬─sleep(2216)
+           │                       ├─{containerd-shim}(2195)
+           ...
 ```
 
-コンテナ内からプロセス(`sleep 1000`)を確認すると、PID = 1 で動作している
+ついでに、コンテナではホストとゲストのLinuxカーネルが同じことも確認します
+
 ```
-$ docker exec -it test-sleep sh -c "ps -ef"
-UID          PID    PPID  C STIME TTY          TIME CMD
-root           1       0  0 14:24 ?        00:00:00 sleep 1000
-root          38       0 40 14:27 pts/0    00:00:00 sh -c ps -e
+$ uname -a
+Linux ip-172-31-34-13 6.5.0-1022-aws #22~22.04.1-Ubuntu SMP Fri Jun 14 16:31:00 UTC 2024 x86_64 x86_64 x86_64 GNU/Linux
+
+$ docker exec -it test-sleep uname -a
+Linux 40c31a5befe1 6.5.0-1022-aws #22~22.04.1-Ubuntu SMP Fri Jun 14 16:31:00 UTC 2024 x86_64 x86_64 x86_64 GNU/Linux
 ```
+
 
 ## (発展)プロセスの作り方
 
