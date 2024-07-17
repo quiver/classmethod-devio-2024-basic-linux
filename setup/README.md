@@ -21,19 +21,22 @@
 ## AWS コンソールログイン手順
 
 1. 指定のURLでAWSコンソールにアクセス
-2. ユーザー名、初期パスワードを入力し、新しいパスワードを設定
+2. ユーザー名、初期パスワード
+3. 新しいパスワードを設定 ※数時間の利用のため、MFAの設定は不要です
 
 ## Cloud9 構築手順
 
 1. AWS Cloud9へ移動
 1. 東京リージョンを選択
 1. 「環境を作成」※ 重要な設定項目
+    - 名前 : IAMユーザー名
+    - 説明 : 呼ばれたいニックネーム
     - 環境タイプ: 新しい EC2 インスタンス
-    - インスタンスタイプ:t3.small
+    - インスタンスタイプ:t3.small(2 vCPU)
     - プラットフォーム : Ubuntu Server 22.04 LTS
+    - 接続 : AWS Systems Manager (SSM)
 
-
-## Cloud9 でワークショップコンテンツをGit Clone
+## Cloud9 のターミナルからワークショップコンテンツをGit Clone
 
 ```
 ~/environment $ git clone https://github.com/quiver/classmethod-devio-2024-basic-linux.git

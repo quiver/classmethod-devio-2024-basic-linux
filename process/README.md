@@ -91,7 +91,7 @@ Jul 10 06:22:22 ip-172-31-34-13 systemd[1]: Started The Apache HTTP Server.
 
 `pstree` のツリー表示と一致します。
 
-## (発展)デーモンプログラム
+## 発展:デーモンプログラム
 
 `sshd` の最後の `d` は `daemon`(デーモン) を表します(`$ man sshd` によると "sshd (OpenSSH Daemon) is the daemon program for ssh(1). ")。
 
@@ -103,7 +103,7 @@ Jul 10 06:22:22 ip-172-31-34-13 systemd[1]: Started The Apache HTTP Server.
 $ systemctl list-units --type=service --state=running
 ```
 
-## (発展)コンテナでのプロセスの考え方
+## 発展:コンテナでのプロセスの考え方
 
 ### 1コンテナ1アプリ
 
@@ -141,7 +141,7 @@ OSの上でOSを動かす仮想技術とことなり、コンテナはOSの上�
 
 Linuxカーネルの Namespaces という機能が利用されており(PID namespace)、コンテナを支える非常に重要な機能の一つです。
 
-### (発展)PID Namespaceの実験例
+### 発展:PID Namespaceの実験例
 
 1000秒間sleep(`sleep 1000`)するコンテナを起動
 
@@ -184,8 +184,7 @@ $ docker exec -it test-sleep uname -a
 Linux 40c31a5befe1 6.5.0-1022-aws #22~22.04.1-Ubuntu SMP Fri Jun 14 16:31:00 UTC 2024 x86_64 x86_64 x86_64 GNU/Linux
 ```
 
-
-## (発展)プロセスの作り方
+## 発展:プロセスの作り方
 
 Apacheサーバーを起動というように、新規にプロセスを作成するとき、fork & exec という仕組みが使われます。
 
@@ -196,4 +195,3 @@ Apacheサーバーを起動というように、新規にプロセスを作成�
 Pythonで子プロセスを作成する subprocess ライブラリをLinuxで実行すると、内部的には `fork()/vfork()/posix_spawn()` が呼ばれています。
 
 参考 : https://docs.python.org/3/library/subprocess.html
-

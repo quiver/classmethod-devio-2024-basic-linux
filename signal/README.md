@@ -176,7 +176,7 @@ ECS はタスクに対してまず `SIGTERM` で正常終了を促し、それ�
 
 [ECS のアプリケーションを正常にシャットダウンする方法 \| Amazon Web Services ブログ](https://aws.amazon.com/jp/blogs/news/graceful-shutdowns-with-ecs/)
 
-## (発展)Amazon ECS以外でのシグナルの類似機能の応用例
+## 発展:Amazon ECS以外でのシグナルの類似機能の応用例
 
 負荷に応じてEC2インスタンスをスケールさせるAmazon EC2 Auto Scalingや未使用のEC2キャパシティを安く活用するEC2スポットインスタンスは、インスタンスの中断を伴うため、ステートレスに実装する必要があります。
 
@@ -189,15 +189,17 @@ EC2 AutoScalingのライフサイクルフックやスポットインスタン�
 
 ## 最難関:シグナルの安全性とレースコンディション
 
-様々なスレッド･プロセスから呼び出されるシグナルハンドラー内の処理には大きな制約があり、この制約が守られないと、今回のregreSSHion(⁠CVE-2024-6387)のようにシグナルハンドラー内で競合状態が発生し、脆弱性に繋がりるリスクがあります。
+様々なスレッド･プロセスから呼び出されるシグナルハンドラー内の処理には大きな制約があり、この制約が守られないと、今回のregreSSHion(⁠CVE-2024-6387)のようにシグナルハンドラー内で競合状態が発生し、脆弱性に繋がるリスクがあります。
+
+TODO:メモリがうんちゃらとか補足説明する
 
 > **Race conditions** frequently occur in signal handlers, since signal handlers support asynchronous actions. These **race conditions** have a variety of root causes and symptoms. Attackers may be able to **exploit a signal handler race condition** to cause the product state to be corrupted, possibly leading to a denial of service or even code execution.
 > 
-> These issues occur when non-reentrant functions, or state-sensitive actions occur in the signal handler, where they may be called at any time. These behaviors can violate assumptions being made by the "regular" code that is interrupted, or by other signal handlers that may also be invoked. If these functions are called at an inopportune moment - such as while a non-reentrant function is already running - memory corruption could occur that may be **exploitable for code execution**.
+> These issues occur when **non-reentrant** functions, or state-sensitive actions occur in the signal handler, where they may be called at any time. These behaviors can violate assumptions being made by the "regular" code that is interrupted, or by other signal handlers that may also be invoked. If these functions are called at an inopportune moment - such as while a **non-reentrant** function is already running - memory corruption could occur that may be **exploitable for code execution**.
 > 
 > [CWE - CWE-364: Signal Handler Race Condition (4.14)](https://cwe.mitre.org/data/definitions/364.html)
 
-非同期シグナルハンドラーは同時に複数回呼び出されても安全に実行されることが求められ、そのためには、ハンドラー内では **非同期シグナル安全関数(async-signal-safe function)** だけを呼び出すひつようがあります。
+非同期シグナルハンドラーは同時に複数回呼び出されても安全に実行されることが求められ、そのためには、ハンドラー内では **非同期シグナル安全関数(async-signal-safe function)** だけを呼び出す必要があります。
 そのような関数は、同時に複数の呼び出しから安全に実行できる再入可能(`reentrant`)な性質をもっていたり、シグナルで割り込まれないアトミックな関数です。
 
 安全な関数の代表例

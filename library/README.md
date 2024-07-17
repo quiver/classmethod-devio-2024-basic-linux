@@ -238,19 +238,17 @@ CMD ["/bin/hello"]
 
 ※ Dockerfileの引用元 https://docs.docker.com/build/building/multi-stage/
 
-## 発展:CPUアーキテクチャ
+## 発展:CPUアーキテクチャとクロスコンパイル
 
-現在サーバー市場で主流のCPUはIntel/AMD系(x86)とArm系(arm)の2つの流派があり、CPUアーキテクチャと呼びます。
+CISC(Complex Instruction Set Computing)命令セットのIntel/AMD(x86)とRISC(Reduced Instruction Set Computing)命令セットのArm(arm)という、まったく異なるCPUアーキテクチャを利用できます。
 
-AWS Gravitionチップや最近のMacやiPhone/AndroidといったスマートフォンはArm系であり、Armより1世代前のMacや市場で入手可能なほとんどのサーバーはx86系です。
+AWS Gravitionチップや最近のMacやスマートフォンはArm系であり、1世代前のMacや市場で入手可能なほとんどのサーバーはx86系です。
 
 GoでコンパイルしたバイナリはLinuxならどこでも動くわけではなく、それぞれのCPUアーキテクチャ向けにコンパイルする必要があります。
 
-## 発展:クロスコンパイル
+コンパイラによっては、異なるアーキテクチャをターゲットにコンパイル可能であり、クロスコンパイルと呼びます。
 
-CPUに限らず、異なるアーキテクチャをターゲットにコンパイルすることをクロスコンパイルと呼びます。
-
-x86_64(x86の64ビット)環境で arm64(armの64ビット)環境向けにコンパイルする場合、次の様に `GOARCH=arm64` を渡します。
+Go において、x86_64(x86の64ビット)環境で arm64(armの64ビット)環境向けにコンパイルする場合、次の様に `GOARCH=arm64` を渡します。
 
 ```
 $ GOARCH=arm64 go build -o hello_arm64 hello.go
@@ -274,22 +272,22 @@ $ file ./hello_arm64
 
 ## コンテナのCPUアーキテクチャ
 
-パブリッククラウド環境(アプリの実行環境)では、x86だけでなくAWS GravitonのようなArm系プロセッサを手軽に利用できます(例:AWS Lambda/AWS ECS Fargate)。
+パブリッククラウド環境(アプリの実行環境)では、x86だけでなくAWS GravitonのようなArm系プロセッサをサーバーレスアプリケーションでも手軽に利用できます(例:AWS Lambda/AWS ECS Fargate)。
 また、Arm系のMacをローカル開発環境にしている人も多く、[GitHub ActionsもArmに対応し](https://github.blog/2024-06-03-arm64-on-github-actions-powering-faster-more-efficient-build-systems/
 )、結果的に、Armでビルドしたものをx86で実行したり、x86でビルドしたものをArmで実行するケースが増えています。
 
-そのために、クロスコンパイルしたり、マルチプラットフォーム対応のコンテナイメージをビルドする機会が増えています。
-
-## (発展)静的リンクされたAWS CLI(AWSのREST APIのコマンドラインツール)
+## 発展:動的リンクされたプログラムを静的に再実装
 
 AWSはAPIをコマンドラインから操作するためのAWS CLIというPython製のコマンドラインプログラムを提供しています。
 
 https://docs.aws.amazon.com/cli/
 
-Pythonインタープリターとプログラムの同梱が必要であることや起動が遅いことから、静的リンクしたシングルバイナリでAWS CLIを(部分的に)実装した人もいます。
+Pythonインタープリターとプログラムとライブラリの同梱が必要であることや起動が遅いことから、静的リンクしたシングルバイナリでAWS CLIをGoで(部分的に)実装した人もいます。
 
 [awslim - Goで実装された高速なAWS CLIの代替品を作った/layerx.go#1 - Speaker Deck](https://speakerdeck.com/fujiwara3/layerx-dot-go-number-1)
 
 ![](fujiwara_awslim.jpg)
 
 このスライドでは、静的リンクによる起動時間やバイナリサイズやメモリへの影響や、マルチステージビルドのようなテクニックなども紹介されています。
+
+動的リンクと静的リンクの対比のよい実例です。
