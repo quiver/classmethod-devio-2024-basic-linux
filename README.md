@@ -49,15 +49,15 @@ index 9fc1a2e2e..191ff4a5a 100644
 
 OpenSSHの開発母体とも言える、[OpenBSD](https://www.openbsd.org/)というセキュリティを強く意識したBSD系OSではこの `syslog_r` 関数が定義されています。`syslog_r` を[マニュアルを抜粋すると、](https://man.openbsd.org/syslog.3)以下のとおりです。
 
-> The syslog_r() function is a reentrant version of the syslog() function. It takes a pointer to a syslog_data structure which is used to store information. This parameter must be initialized before syslog_r() is called. The SYSLOG_DATA_INIT constant is used for this purpose.
-> 
+> The syslog_r() function is a reentrant version of the syslog() function. 
+>
 > ...
-> 
+>
 > **CAVEATS**
-> 
+>
 > syslog_r() and the other reentrant functions should only be used where reentrancy is required (for instance, in a signal handler). syslog() being not reentrant, only syslog_r() should be used here. For more information about reentrancy and signal handlers, see signal(3).
 
-シグナルハンドラー内では reentrant な syslog 関数が定義されている場合のみ、ログ出力するように修正しているわけです。
+シグナルハンドラー内では reentrant な syslog 関数が利用されてている場合のみ、ログ出力するように修正しているわけです。
 
 ワークショップを終えると、この意味が理解できるようになるはずです。
 
