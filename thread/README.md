@@ -167,9 +167,9 @@ $ ls -F /proc/1471/task/
 
 このスレッドの特性はメリットのようにも見えますが、意図せず共有されることによる難しい不具合を起こしやすく、regreSSHionも広義では同類の脆弱性です。
 
-プロセス間通信は古くはSystem V IPCというメッセージキュー、セマフォ、共有メモリのAPIがLinux以前のUnixのころから存在し、Linux時代になって、Posix IPC というきれいなAPIとして整理されました。
+プロセス間通信は古くはSystem V IPCというメッセージキュー、セマフォ、共有メモリのAPIがLinux以前のUNIXのころから存在し(System VはUNIXの一種)、Linux時代になって、Posix IPC というきれいなAPIとして整理されました。
 
-蛇足ですが、私がシステムプログラミングの世界に足を踏み入れるきっかけは、Cで書かれたSystem V IPCのメッセージキューを使ったプログラムをメンテすることになったことです。
+蛇足ですが、私がシステムプログラミングの世界に足を踏み入れたきっかけは、Cで書かれたSystem V IPC メッセージキューを使ったプログラムをメンテすることになったことです。
 
 ## 並行と並列の違い
 
@@ -177,7 +177,7 @@ $ ls -F /proc/1471/task/
 
 並列は複数のタスクを同時に実行し、並行は複数のタスクを並列はるいは細切れにいったりきたりしながら(コンテキストスイッチ)実行します。
 
-- シンプル説明 [並行処理と並列処理\｜Goでの並行処理を徹底解剖！](https://zenn.dev/hsaki/books/golang-concurrency/viewer/term)
+- シンプル説明 [並行処理と並列処理 - Goでの並行処理を徹底解剖！](https://zenn.dev/hsaki/books/golang-concurrency/viewer/term)
 - 難しい説明 [たとえばなしで見る誇張の少ない「並行」と「並列」](https://zenn.dev/koron/articles/05210473c8fc62f5e8fb)
 
 ## 発展:CPUのスレッド
@@ -192,6 +192,8 @@ Amazon EC2のvCPU数は、論理コア数です。
 
 そのため、Intel/AMDのvCPU数は物理コアの2倍であり、Arm(Graviton)のvCPU数は物理コア数と同じです。
 
+次の出力はx86なEC2インスタンスのCPU情報です。
+
 ```
 $ egrep -E 'physical id|processor' /proc/cpuinfo
 processor       : 0
@@ -200,7 +202,7 @@ processor       : 1
 physical id     : 0
 ```
 
-physical idは0しか存在しないため、物理コア数は1、processorは0と1が存在するため、論理コア数は2となります。
+physical idは0しか存在しないため、物理コア数は1、processorは0と1が存在するため、論理コア数は2でSMTが有効とわかります。
 
 `htop` コマンドを利用すると、論理CPUごとの使用率を確認できます。
 

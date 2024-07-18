@@ -99,6 +99,8 @@ Jul 10 06:58:44 ip-172-31-34-13 systemd[1]: Reloading The Apache HTTP Server...
 Jul 10 06:58:44 ip-172-31-34-13 systemd[1]: Reloaded The Apache HTTP Server.
 ```
 
+`Process: 4371 ExecReload=/usr/sbin/apachectl graceful (code=exited, status=0/SUCCESS)` から gracefulに処理されたとわかります。
+
 参考
 
 - [Stopping and Restarting Apache HTTP Server - Apache HTTP Server Version 2.4](https://httpd.apache.org/docs/2.4/stopping.html)
@@ -155,7 +157,7 @@ while True:
 | プログラム実行中...<br>... | $ pgrep python3<br>4550<br>$ kill -SIGTERM 4550 |
 | Terminated<br>$ |  |
 
-## コンテナオーケストレーターAmazon ECSでのシグナルの利用例
+## 発展:コンテナオーケストレーターAmazon ECSでのシグナルの利用例
 
 コンテナ化したアプリケーションは、ワークロードに応じて柔軟にスケールできます。
 
@@ -176,6 +178,14 @@ ECS はタスクに対してまず `SIGTERM` で正常終了を促し、それ�
 
 [ECS のアプリケーションを正常にシャットダウンする方法 \| Amazon Web Services ブログ](https://aws.amazon.com/jp/blogs/news/graceful-shutdowns-with-ecs/)
 
+## 発展:AWS Lambda Python 12以降でのgracefulなシグナルの利用例
+
+FaaSのAWS Lambdaにおいて、Pythonの3.12以降のランタイムでは、external extensions と連携し、`SIGTERM`を捕まえて、graceful にシャットダウンできるようになっています。
+
+
+- [Building Lambda functions with Python - AWS Lambda](https://docs.aws.amazon.com/lambda/latest/dg/lambda-python.html#python-graceful-shutdown)
+- [Augment Lambda functions using Lambda extensions - AWS Lambda](https://docs.aws.amazon.com/lambda/latest/dg/lambda-extensions.html)
+
 ## 発展:Amazon ECS以外でのシグナルの類似機能の応用例
 
 負荷に応じてEC2インスタンスをスケールさせるAmazon EC2 Auto Scalingや未使用のEC2キャパシティを安く活用するEC2スポットインスタンスは、インスタンスの中断を伴うため、ステートレスに実装する必要があります。
@@ -191,7 +201,7 @@ EC2 AutoScalingのライフサイクルフックやスポットインスタン�
 
 様々なスレッド･プロセスから呼び出されるシグナルハンドラー内の処理には大きな制約があり、この制約が守られないと、今回のregreSSHion(⁠CVE-2024-6387)のようにシグナルハンドラー内で競合状態が発生し、脆弱性に繋がるリスクがあります。
 
-TODO:メモリがうんちゃらとか補足説明する
+TODO:メモリがうんちゃらとかもう少し追記する
 
 > **Race conditions** frequently occur in signal handlers, since signal handlers support asynchronous actions. These **race conditions** have a variety of root causes and symptoms. Attackers may be able to **exploit a signal handler race condition** to cause the product state to be corrupted, possibly leading to a denial of service or even code execution.
 > 

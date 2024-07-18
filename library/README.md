@@ -6,7 +6,8 @@ C言語の場合、ISOが標準ライブラリを定めています。
 glibc はGNUプロジェクトによる標準ライブラリの実装であり、Linux環境で広く使われています。
 
 Linuxでは、 `man` コマンドでリファレンス・マニュアルを読めます。
-コマンドから `$ man glibc` を実行しましょう
+
+コマンドから `$ man glibc` を実行しましょう。man ページは `q` で終了できます。
 
 ```
 $ man glibc  # あるいは $ man 7 libc
@@ -33,8 +34,6 @@ DESCRIPTION
        brary, and executing this pathname will cause glibc to display various information about the version installed on your system.
 ```
 
-man ページは `q` で終了できます。
-
 ## 補足:man について
 
 Linuxでは、 `man` コマンドでマニュアル(**man**nual)を読めます。
@@ -55,6 +54,16 @@ Linuxでは、 `man` コマンドでマニュアル(**man**nual)を読めます�
 これは、`man` はプログラムのため、セクション1に該当することを意味し、`$ man 1 man` と呼び出しても同じです。
 
 ページだけではセクションが一意に定まらない例もあり、`$ man 1 printf` とすると、`printf` コマンドのページが表示され、`$ man 3 printf` とすると、`glibc` 等で実装されたC言語のライブラリ関数の `printf(3)` 関数のページが表示されます。
+
+man でマニュアルを見ながらライブコーディングしている実例
+
+https://youtu.be/P6w_5gJw3IY?si=EHtqce_aT-WvEu5c&t=135
+
+`man` はLinuxの前身のUNIXの1970年代の黎明期から存在しました。
+
+インターネットがない時代は、マニュアルは、印刷物、あるいは、OSに内包されている必要があり、`man` は後者での提供です。
+
+参考 [History of UNIX Manpages](https://manpages.bsd.lv/history.html)
 
 ## glibc を使ってみる
 
@@ -90,21 +99,22 @@ Cの実行ファイルの作成は次の2ステップからなります。
 
 ```
 $ gcc -c hello.c -o hello.o # ステップ1 : オブジェクトファイルの作成
-$ gcc hello.o -o hello      # ステップ2 : オブジェクトファイルとライブラリのリンク
-$ ./hello
+$ gcc hello.o -o hello_c    # ステップ2 : オブジェクトファイルとライブラリのリンク
+$ ./hello_c
 hello, world
 
 $ file hello.o  # オブジェクトファイル
 hello.o: ELF 64-bit LSB relocatable, x86-64, version 1 (SYSV), not stripped
 
-$ file hello    # 実行ファイル
+$ file hello_c  # 実行ファイル
 hello: ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, BuildID[sha1]=b3e50f2741351b23a37148846fc2a42a6394f609, for GNU/Linux 3.2.0, not stripped
 ```
 
-特に、オブジェクトファイルやライブラリを結合して一つの実行ファイルに作成するプログラムをリンカと呼びます。`ld`(gcc デフォルト)、`lld`(LLVM)、`mold`(`lld`作者による次世代リンカ)などがありです。
+大規模プログラムでは、分割コンパイルが求められます。
+
+オブジェクトファイルやライブラリを結合して一つの実行ファイルに作成するプログラムをリンカと呼びます。`ld`(gcc デフォルト)、`lld`(LLVM)、`mold`(`lld`作者による次世代リンカ)などがありです。
 
 参考 [『リンカー moldをいろんなターゲットに移植した話』を視聴してCPUやpsABIの世界を覗き見してみた #kernelvm](https://zenn.dev/quiver/articles/7aa6deb2d77e44)
-
 
 ## 共有ライブラリと静的ライブラリ
 
@@ -132,7 +142,7 @@ $ ldd ./a.out
 
 `.so` は shared objects(共有ライブラリ)を表します。
 
-バイナリファイルからテキストを抜き出す `string` プログラムを利用して、`libc.so.6` の実体が glibc(GNU C Library) であることを確認します。
+バイナリファイルからテキストを抜き出す `strings` プログラムを利用して、`libc.so.6` の実体が glibc(GNU C Library) であることを確認します。
 
 ```
 $ strings /lib/x86_64-linux-gnu/libc.so.6 | grep GNU
@@ -159,8 +169,8 @@ func main() {
 コンパイルして実行します。
 
 ```
-$ go build hello.go
-$ ./hello
+$ go build -o hello_go hello.go
+$ ./hello_go
 hello, world
 ```
 
@@ -183,14 +193,14 @@ hello: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), statically linked, G
 "hello, world"を表示するだけのC言語とGo言語のファイルサイズを比較します。
 
 ```
-$ ls -lh go/hello c/hello
--rwxrwxr-x 1 ubuntu ubuntu  16K Jul  9 03:52 c/hello
--rwxrwxr-x 1 ubuntu ubuntu 1.9M Jul  9 04:06 go/hello
+$ ls -lh hello_go hello_c
+-rwxrwxr-x 1 ubuntu ubuntu  16K Jul  9 03:52 hello_c
+-rwxrwxr-x 1 ubuntu ubuntu 1.9M Jul  9 04:06 hello_go
 ```
 
 動的リンクしたC版は16Kなのに対して、静的リンクしたGo版は1.9Mと100倍以上の開きがあります。
 
-## コンテナでの静的リンクの活用例
+## 発展:コンテナでの静的リンクの活用例
 
 コンテナでは、プログラムをビルドし、生成されたアーティファクトを実行します
 
@@ -238,9 +248,9 @@ CMD ["/bin/hello"]
 
 ※ Dockerfileの引用元 https://docs.docker.com/build/building/multi-stage/
 
-## 発展:CPUアーキテクチャとクロスコンパイル
+## CPUアーキテクチャとクロスコンパイル
 
-CISC(Complex Instruction Set Computing)命令セットのIntel/AMD(x86)とRISC(Reduced Instruction Set Computing)命令セットのArm(arm)という、まったく異なるCPUアーキテクチャを利用できます。
+主要パブリッククラウドでは、CISC(Complex Instruction Set Computing)命令セットのIntel/AMD(x86)とRISC(Reduced Instruction Set Computing)命令セットのArm(arm)という、まったく異なるCPUアーキテクチャを利用できます。
 
 AWS Gravitionチップや最近のMacやスマートフォンはArm系であり、1世代前のMacや市場で入手可能なほとんどのサーバーはx86系です。
 
@@ -276,17 +286,19 @@ $ file ./hello_arm64
 また、Arm系のMacをローカル開発環境にしている人も多く、[GitHub ActionsもArmに対応し](https://github.blog/2024-06-03-arm64-on-github-actions-powering-faster-more-efficient-build-systems/
 )、結果的に、Armでビルドしたものをx86で実行したり、x86でビルドしたものをArmで実行するケースが増えています。
 
-## 発展:スクリプト言語からC等で書かれたバイナリのライブラリを呼ぶときの問題
+TODO:具体例のリンクを追加
+
+## スクリプト言語からC等で書かれたバイナリのライブラリを呼ぶときの問題
 
 PythonやRubyのようなスクリプト言語は、基本的には、言語のインタープリターさえインストールされていれば、OSやCPUアーキテクチャーに関係なく実行できます。
 
 しかし、高速化等のために、Cのようなコンパイル言語で実装されたライブラリは、実行環境向けのライブラリが必要です。
 
-例として、同じx86_64のCPUアーキテクチャーでありながら、開発環境がWindowsで実行環境がLinux、同じLinuxかんきょうでありながら、開発環境がx86_64、実行環境がARM64（AArch64）のようなケースが該当します。
+例として、同じx86_64のCPUアーキテクチャーでありながら、開発環境がWindowsで実行環境がLinux、同じLinux環境でありながら、開発環境がx86_64、実行環境がARM64（AArch64）のようなケースが該当します。
 
 そのような場合は、デプロイ時に実行環境向けのパッケージを同梱させる必要があります。
 
-[postgresql - AWS Lambda Importing psycopg2 - Unable to import module 'app': No module named 'psycopg2._psycopg - Stack Overflow](https://stackoverflow.com/questions/74396827/aws-lambda-importing-psycopg2-unable-to-import-module-app-no-module-named)
+- [postgresql - AWS Lambda Importing psycopg2 - Unable to import module 'app': No module named 'psycopg2._psycopg - Stack Overflow](https://stackoverflow.com/questions/74396827/aws-lambda-importing-psycopg2-unable-to-import-module-app-no-module-named)
 
 ## 発展:Python LambdaでCバインディングを静的リンクしたはなし
 

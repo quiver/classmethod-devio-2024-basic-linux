@@ -2,7 +2,7 @@
 
 実行中のプログラムのことをプロセスと呼びます。
 
-Linuxでは `ps` コマンド(ps=process status)からプロセス情報を確認できます。
+Linuxでは `ps` コマンド(`ps`=process status)からプロセス情報を確認できます。
 
 現在ログインしているシェル(=実行中のプログラム)とそのプロセスID(PID)を `$$` 変数から取得します
 
@@ -44,7 +44,7 @@ systemd(1)─┬─acpid(367)
 
 プロセス名に続くカッコの数字はプロセスID(PID)です。
 
-ブートローダーがLinuxカーネルを起動すると、LinuxカーネルがinitシステムをPID=1で起動し、このシステムを起点に、様々なプログラムが起動されます。
+ブートローダーがLinuxカーネルを起動すると、Linuxカーネルはプロセスを管理する [init](https://ja.wikipedia.org/wiki/Init) をPID=1で起動し、このシステムを起点に、様々なプログラムが起動されます。
 Ubuntu 22.04 では、このinitシステムに `systemd` が採用されています。
 
 `systemd` の概要を公式ページから引用します。
@@ -143,7 +143,7 @@ Linuxカーネルの Namespaces という機能が利用されており(PID name
 
 ### 発展:PID Namespaceの実験例
 
-1000秒間sleep(`sleep 1000`)するコンテナを起動
+1000秒間sleep(`sleep 1000`)するコンテナを `test-sleep ` という名前で起動します
 
 ```
 $ docker run -d --name test-sleep ubuntu sleep 1000
@@ -174,6 +174,8 @@ systemd(1)─┬─acpid(365)
            ...
 ```
 
+※ 補足 : コンテナランタイム(`containerd`) 上では、一般的なコンテナや WASM 等多様なコンテナを実行できます。その抽象化を担うのが `shim` です。([参考](https://www.docker.com/blog/docker-wasm-technical-preview/))
+
 ついでに、コンテナではホストとゲストのLinuxカーネルが同じことも確認します
 
 ```
@@ -184,13 +186,17 @@ $ docker exec -it test-sleep uname -a
 Linux 40c31a5befe1 6.5.0-1022-aws #22~22.04.1-Ubuntu SMP Fri Jun 14 16:31:00 UTC 2024 x86_64 x86_64 x86_64 GNU/Linux
 ```
 
+仮想技術と異なり、コンテナ技術はホストのカーネルの上でネームスペースが隔離されたプロセスを起動しているだけです。
+
 ## 発展:プロセスの作り方
 
-Apacheサーバーを起動というように、新規にプロセスを作成するとき、fork & exec という仕組みが使われます。
+Apacheサーバーを起動というように、新規にプロセスを作成するとき、[fork & exec という仕組み](https://en.wikipedia.org/wiki/Fork%E2%80%93exec)が使われます。
 
 プロセスを2つに分裂させ(`fork()`)、片方の中身を起動したいプログラムで書き換えます(`exec()`)。この一連のよくある処理を限定的に実装したのが `posix_spawn()` です。
 
-詳細は『Linuxのしくみ』 12章「プロセスにかかわるAPI」を参照してください。
+詳細は『ふつうのLinuxプログラミング 第2版』の 12章「プロセスにかかわるAPI」を参照してください。
+
+- 実装例 https://github.com/satoru-takeuchi/linux-in-practice-2nd/tree/main/02-process-management-1
 
 Pythonで子プロセスを作成する subprocess ライブラリをLinuxで実行すると、内部的には `fork()/vfork()/posix_spawn()` が呼ばれています。
 
