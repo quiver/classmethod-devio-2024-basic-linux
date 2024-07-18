@@ -1,13 +1,11 @@
 ## ライブラリとは?
 
-
 > The vulnerability, which is a signal handler race condition in OpenSSH’s server (sshd), allows unauthenticated remote code execution (RCE) as root on **glibc-based** Linux systems; that presents a significant security risk. This race condition affects sshd in its default configuration.
-
 
 プログラミング言語は、文字列処理やファイル操作やネットワーク通信のような頻出操作をかんたんに行うためのライブラリを提供します。
 C言語の場合、ISOが標準ライブラリを定めています。
 
-glibc はGNUプロジェクトによる標準ライブラリの実装であり、Linux環境で広く使われています。
+[glibc](https://sourceware.org/glibc/)はGNUプロジェクトによる標準ライブラリの実装であり、Linux環境で広く使われています。
 
 Linuxでは、 `man` コマンドでリファレンス・マニュアルを読めます。
 
@@ -114,7 +112,7 @@ $ file hello_c  # 実行ファイル
 hello: ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, BuildID[sha1]=b3e50f2741351b23a37148846fc2a42a6394f609, for GNU/Linux 3.2.0, not stripped
 ```
 
-大規模プログラムでは、分割コンパイルが求められます。
+大規模プログラムでは、分割コンパイルは有用です。
 
 オブジェクトファイルやライブラリを結合して一つの実行ファイルに作成するプログラムをリンカと呼びます。`ld`(gcc デフォルト)、`lld`(LLVM)、`mold`(`lld`作者による次世代リンカ)などがありです。
 

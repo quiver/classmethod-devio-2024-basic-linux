@@ -14,6 +14,7 @@ Windows や Macと同じくLinuxの権限もシステム管理権限と一般権
 $ id root
 uid=0(root) gid=0(root) groups=0(root)
 ```
+
 一般ユーザーの `ubuntu` と比較してみましょう
 
 ```
@@ -23,9 +24,14 @@ $ id $USER
 uid=1000(ubuntu) gid=1000(ubuntu) groups=1000(ubuntu),4(adm),20(dialout),24(cdrom),25(floppy),27(sudo),29(audio),30(dip),44(video),46(plugdev),119(netdev),120(lxd),999(docker)
 ```
 
+出力から `ubuntu` ユーザーは、以下の機能を使えるグループに属している事がわかります。
+
+- 27(sudo)
+- 999(docker)
+
 ## su/sudo コマンドで強い権限で操作
 
-サーバーを停止したり、80番ポートでウェブサーバーを起動する場合、システム管理者権限が必要です。
+サーバーを停止したり、HTTP通信用の80番ポートでウェブサーバーを起動するなど、サーバー全体に影響をあたえるような操作を行う場合、システム管理者権限が必要です。
 
 このような場合に `sudo` コマンドや `su` コマンドを使います。
 
@@ -35,9 +41,10 @@ uid=1000(ubuntu) gid=1000(ubuntu) groups=1000(ubuntu),4(adm),20(dialout),24(cdro
 
 `man` には "execute a command as another user" とあります。
 
-Ubuntuでは systemd というプログラムでプロセス管理されています。
+Ubuntuでは `systemd` というプログラムでプロセス管理されています。
 
-一般ユーザー権限で、この systemd 経由で WebサーバーのApache(nginxの仲間)のリスタートを試みると、権限不足のエラーが発生します。
+一般ユーザー権限で、この systemd 経由で [WebサーバーのApache](https://httpd.apache.org/)(nginxの仲間)の再起動を試みると、権限不足のエラーが発生します。
+
 ```
 $ systemctl restart apache2
 ==== AUTHENTICATING FOR org.freedesktop.systemd1.manage-units ===
@@ -45,7 +52,8 @@ Authentication is required to restart 'apache2.service'.
 Authenticating as: Ubuntu (ubuntu)
 Password:
 ```
-`sudo` を接頭すると、root ユーザーで実行されるため、リスタートが成功します。
+
+`sudo` を接頭すると、root ユーザーとして実行されるため、再起動が成功します。
 ```
 $ sudo systemctl restart apache2
 $
@@ -65,7 +73,7 @@ ubuntu    ALL=(ALL) NOPASSWD: /sbin/poweroff, /sbin/reboot, /sbin/shutdown
 `man` には " run a command with substitute user and group ID" とあります。
 
 ```
-$ su -       # root ユーザーになる
+$ su -       # root ユーザーになる。`-` をつけることで、ログインシェルとしてログイン(=`~/.profile` などの初期化ファイルを読み込む)
 Password:
 
 $ su - sato  # sato ユーザーになる

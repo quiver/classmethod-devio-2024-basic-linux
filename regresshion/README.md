@@ -37,19 +37,20 @@ CVEの取り組みにより、sshdの開発者もsshdを配布するベンダー
 
 SSH 実装として OpenSSHプロジェクトによるクライアント向けの `ssh` とサーバー向けの `sshd` が多くの環境で利用されています。
 
-Windows環境で利用される `putty` は SSH プロトコルを実装した SSH クライアントプログラムの一つです(`putty` にははSSH以外にも様々なプロトコルが実装されています)。
+Windows環境で利用される `putty` は SSH プロトコルを実装した SSH クライアントプログラムの一つです(`putty` にははSSH以外にも`telnet`など様々なプロトコルに対応しています)。
 
 ![](ssh.png)
 
 SSHの認証方式として以下があります。
 
 - パスワード認証
+    - 無効化されていることが多いです
 - 公開鍵/秘密鍵ペアの公開鍵認証
     - [Amazon EC2が利用](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/connect-linux-inst-ssh.html)
 - クライアント認証
     - [Netflixの利用例](https://zenn.dev/quiver/articles/32ec71c3eedb2b)
 
-GitHub.com のレポジトリでもSSH認証が利用されています。
+GitHub.com のレポジトリでもSSHの公開鍵認証が利用されています。
 
 [About SSH - GitHub Docs](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/about-ssh)
 
