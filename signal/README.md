@@ -231,37 +231,6 @@ TODO:メモリがうんちゃらとかもう少し追記する
 
 > An  async-signal-safe  function  is one that can be safely called from within a signal handler.  Many functions are not async-signal-safe.  In particular, nonreentrant functions are generally unsafe to call from a signal handler.
 
-この脆弱性を修正したエンジニアは、[脆弱性を回避するミニマルなパッチを提供しています](https://marc.info/?l=oss-security&m=171982317624594)
-
-```
-1) Critical race condition in sshd
-
-diff --git a/log.c b/log.c
-index 9fc1a2e2e..191ff4a5a 100644
---- a/log.c
-+++ b/log.c
-@@ -451,12 +451,14 @@ void
- sshsigdie(const char *file, const char *func, int line, int showfunc,
-     LogLevel level, const char *suffix, const char *fmt, ...)
- {
-+#ifdef SYSLOG_R_SAFE_IN_SIGHAND
- 	va_list args;
- 
- 	va_start(args, fmt);
- 	sshlogv(file, func, line, showfunc, SYSLOG_LEVEL_FATAL,
- 	    suffix, fmt, args);
- 	va_end(args);
-+#endif
- 	_exit(1);
- }
-```
-
-OpenBSD(Linuxとは別のUNIX系OS)のように、シグナルハンドラー内で再入可能な`syslog_r` 関数(`syslog_r`)が使われている場合のみ、ログ出力しています。このミニマルパッチを適用後も、OpenBSDでの挙動は変わりません。
-
-一方で、 `glibc` (を使っているLinux OS)ではそのような関数は定義されておらず、再入可能でない `syslog` 関数がシグナルハンドラー内で呼ばれて脆弱性の温床になっていたため、そのような関数を呼ばなくすることがミニマルなパッチとなります。
-
-※ 細かく言うと、`syslog_r` は ISOが定めるCの標準ライブラリには含まれていません
-
 参考
 
 - [signal-safety(7) - Linux manual page](https://man7.org/linux/man-pages/man7/signal-safety.7.html)
