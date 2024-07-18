@@ -158,7 +158,7 @@ $ python3 -m http.server 8000
 Serving HTTP on 0.0.0.0 port 8000 (http://0.0.0.0:8000/) ...
 ```
 
-## sudo の利用制限
+## オプション:sudo の利用制限
 
 Amazon EC2のAmazon LinuxやUbuntuでは、初期ユーザーは自由度高く `sudo` を呼び出せて、ルート権限で色々操作できます。
 

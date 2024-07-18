@@ -52,7 +52,7 @@ Linuxでは、 `man` コマンドでマニュアル(**man**nual)を読めます�
 8.   System administration commands (usually only for root)
 9.   Kernel routines [Non standard]
 
-`$ man man` とすると `MAN(1)` に誘導されます。
+`$ man man`(`man`のマニュアルを`man`でよむ) とすると `MAN(1)` に誘導されます。
 これは、`man` はプログラムのため、セクション1に該当することを意味し、`$ man 1 man` と呼び出しても同じです。
 
 ページだけではセクションが一意に定まらない例もあり、`$ man 1 printf` とすると、`printf` コマンドのページが表示され、`$ man 3 printf` とすると、`glibc` 等で実装されたC言語のライブラリ関数の `printf(3)` 関数のページが表示されます。
@@ -304,7 +304,7 @@ PythonやRubyのようなスクリプト言語は、基本的には、言語の�
 
 ## 発展:Python LambdaでCバインディングを静的リンクしたはなし
 
-psycopg2 はPostgreSQLクライアント用Cインターフェース libpq のラッパーであり、標準では libpq を動的リンクします。
+[psycopg2](https://www.psycopg.org/) はPostgreSQLクライアント用Cライブラリ [libpq](https://www.postgresql.org/docs/17/libpq.html) のラッパーであり、標準では libpq を動的リンクします。
 AWS Lambda の実行環境では libpq は共有ライブラリとしてインストールされていないため、静的リンクして解決。
 
 [AWS Lambda Pythonからpsycopg2でRDS PostgreSQLに接続する \| DevelopersIO](https://dev.classmethod.jp/articles/build-psycopg2-for-aws-lambda-python/)

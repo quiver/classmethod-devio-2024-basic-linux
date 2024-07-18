@@ -17,7 +17,6 @@ regreSSHion の詳細は、以下のリンクをご確認ください
 
 - [OpenSSHの脆弱性 CVE-2024-6387についてまとめてみた - piyolog](https://piyolog.hatenadiary.jp/entry/2024/07/02/032122)
 - [RegreSSHion: RCE in OpenSSH's server, on glibc-based Linux systems - Hacker News](https://news.ycombinator.com/item?id=40843778)
-- https://github.com/zgzhang/cve-2024-6387-poc
 
 ### CVEとは?
 
@@ -78,3 +77,5 @@ $ aws ecs execute-command --cluster cluster-name \
 ## 参考
 
 - [OpenSSHの脆弱性 CVE-2024-6387についてまとめてみた - piyolog](https://piyolog.hatenadiary.jp/entry/2024/07/02/032122)
+- [OpenSSH本体に取り込まれた脆弱性パッチ](https://github.com/openssh/openssh-portable/commit/81c1099d22b81ebfd20a334ce986c4f753b0db29)
+- [脆弱性のミニマルパッチ](https://marc.info/?l=oss-security&m=171982317624594)
