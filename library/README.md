@@ -1,5 +1,9 @@
 ## ライブラリとは?
 
+
+> The vulnerability, which is a signal handler race condition in OpenSSH’s server (sshd), allows unauthenticated remote code execution (RCE) as root on **glibc-based** Linux systems; that presents a significant security risk. This race condition affects sshd in its default configuration.
+
+
 プログラミング言語は、文字列処理やファイル操作やネットワーク通信のような頻出操作をかんたんに行うためのライブラリを提供します。
 C言語の場合、ISOが標準ライブラリを定めています。
 

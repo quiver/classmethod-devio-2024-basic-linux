@@ -1,5 +1,7 @@
 # root権限
 
+> The vulnerability, which is a signal handler race condition in OpenSSH’s server (sshd), allows unauthenticated remote code execution (RCE) as **root** on glibc-based Linux systems; that presents a significant security risk. This race condition affects sshd in its default configuration.
+
 ## Linuxの権限
 
 Windows や Macと同じくLinuxの権限もシステム管理権限と一般権限に分かれます。
@@ -15,7 +17,7 @@ uid=0(root) gid=0(root) groups=0(root)
 一般ユーザーの `ubuntu` と比較してみましょう
 
 ```
-$ echo $USER
+$ echo $USER  # ログインユーザー
 ubuntu
 $ id $USER
 uid=1000(ubuntu) gid=1000(ubuntu) groups=1000(ubuntu),4(adm),20(dialout),24(cdrom),25(floppy),27(sudo),29(audio),30(dip),44(video),46(plugdev),119(netdev),120(lxd),999(docker)
@@ -152,9 +154,9 @@ Serving HTTP on 0.0.0.0 port 8000 (http://0.0.0.0:8000/) ...
 
 Amazon EC2のAmazon LinuxやUbuntuでは、初期ユーザーは自由度高く `sudo` を呼び出せて、ルート権限で色々操作できます。
 
-実運用では、どのユーザーに `sudo` を許可するか、どのコマンドを `sudo` と一緒にルート権限で実行できるか、といったことを詰める必要も出てきます。
+実運用では、どのユーザーに `sudo` を許可するか、どのコマンドを `sudo` で実行できるか、といったことを詰める必要も出てきます。
 
-## コンテナの実行ユーザー
+## 発展:コンテナの実行ユーザー
 
 Dockerコンテナではデフォルトでrootユーザーで実行されています。
 

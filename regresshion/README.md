@@ -1,24 +1,29 @@
 # regreSSHionについて
 
+> The vulnerability, which is a signal handler race condition in **OpenSSH’s server (sshd)**, allows unauthenticated remote code execution (RCE) as root on glibc-based Linux systems; that presents a significant security risk. This race condition affects sshd in its default configuration.
+
+
 ## 概要
 
 OpenSSH sshdというほぼすべてのLinuxサーバーにインストールされ、頻繁に使用されるSSHのサーバープログラム(`sshd`)に脆弱性(CVE-2024-6387)が発見されました。
 
 [OpenSSH Vulnerability: CVE-2024-6387 FAQs and Resources \| Qualys](https://www.qualys.com/regresshion-cve-2024-6387/)
 
-2006年に修正された同じ sshd に関するCVE-2006-5051の回帰(regression)バグであることから、この脆弱性には "regression" と同じ発音で綴りに "SSH" を含めた regreSSHion という名前がつけられました。
+2006年に修正された同じ `sshd` に関するCVE-2006-5051の回帰(regression)バグであることから、この脆弱性には "regression" と同じ発音で綴りに "SSH" を含めた regreSSHion という名前がつけられました。
 
 [シグナルハンドラの競合状態(CWE-364)](https://cwe.mitre.org/data/definitions/364.html)に分類される脆弱性です。
 
-regreSSHion の詳細は、次の日本語の解説記事をご確認ください
+regreSSHion の詳細は、以下のリンクをご確認ください
 
-[OpenSSHの脆弱性 CVE-2024-6387についてまとめてみた - piyolog](https://piyolog.hatenadiary.jp/entry/2024/07/02/032122)
+- [OpenSSHの脆弱性 CVE-2024-6387についてまとめてみた - piyolog](https://piyolog.hatenadiary.jp/entry/2024/07/02/032122)
+- [RegreSSHion: RCE in OpenSSH's server, on glibc-based Linux systems - Hacker News](https://news.ycombinator.com/item?id=40843778)
+- https://github.com/zgzhang/cve-2024-6387-poc
 
 ### CVEとは?
 
 CVE(Common Vulnerabilities and Exposures)は脆弱性を一意な名前・IDで管理。
 
-> The mission of the CVE® Program is to identify, define, and catalog publicly disclosed cybersecurity vulnerabilities. 
+> The mission of the CVE® Program is to identify, define, and catalog publicly disclosed cybersecurity vulnerabilities.
 >
 > https://www.cve.org/About/Overview
 

@@ -175,7 +175,7 @@ $ ls -F /proc/1471/task/
 
 マルチスレッド・マルチプロセスで処理するときは、平行(Concurrent)と並列(Parallel)の違いを意識する必要があります。
 
-並列は複数のタスクを同時に実行し、並行は複数のタスクを並列はるいは細切れにいったりきたりしながら(コンテキストスイッチ)実行します。
+並列は複数のタスクを同時に実行し、並行は複数のタスクを並列あるいは細切れにいったりきたりしながら(コンテキストスイッチ)実行します。
 
 - シンプル説明 [並行処理と並列処理 - Goでの並行処理を徹底解剖！](https://zenn.dev/hsaki/books/golang-concurrency/viewer/term)
 - 難しい説明 [たとえばなしで見る誇張の少ない「並行」と「並列」](https://zenn.dev/koron/articles/05210473c8fc62f5e8fb)
@@ -203,6 +203,12 @@ physical id     : 0
 ```
 
 physical idは0しか存在しないため、物理コア数は1、processorは0と1が存在するため、論理コア数は2でSMTが有効とわかります。
+
+SMTが有効で論理コア数が2N個の環境に対して2N並列でそれぞれが100%の負荷をかけると、計算機の並列度は物理コア数と同じN個で2N並行に処理します。
+
+ARMなAWS GravitonでRDBに上記負荷をかけた例
+
+[Amazon AuroraがARMベースのGraviton2プロセッサを搭載したインスタンスタイプのプレビューを開始 #reinvent - DevelopersIO](https://dev.classmethod.jp/articles/amazon-aurora-supports-gravition-2-as-public-preview/)
 
 `htop` コマンドを利用すると、論理CPUごとの使用率を確認できます。
 

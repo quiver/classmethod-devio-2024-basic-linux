@@ -1,5 +1,8 @@
 # シグナルとは?
 
+> The vulnerability, which is a **signal handler race condition** in OpenSSH’s server (sshd), allows unauthenticated remote code execution (RCE) as root on glibc-based Linux systems; that presents a significant security risk. This **race condition** affects sshd in its default configuration.
+
+
 シグナルを利用すると、実行中のプロセスに外から(非)同期な割り込みイベント処理を行えます。
 
 Webサーバーの停止や再起動のような処理や、Ctrl-Cでプログラムを止める処理などがシグナルの利用例です。

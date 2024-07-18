@@ -1,5 +1,7 @@
 # プロセスとは?
 
+> The vulnerability, which is a signal handler race condition in OpenSSH’s server (sshd), allows unauthenticated remote code execution (RCE) as root on glibc-based Linux systems; that presents a significant security risk. This race condition affects sshd in its default configuration.
+
 実行中のプログラムのことをプロセスと呼びます。
 
 Linuxでは `ps` コマンド(`ps`=process status)からプロセス情報を確認できます。
