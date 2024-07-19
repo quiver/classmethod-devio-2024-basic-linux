@@ -2,7 +2,6 @@
 
 > The vulnerability, which is a **signal handler race condition** in OpenSSH’s server (sshd), allows unauthenticated remote code execution (RCE) as root on glibc-based Linux systems; that presents a significant security risk. This **race condition** affects sshd in its default configuration.
 
-
 シグナルを利用すると、実行中のプロセスに外から(非)同期な割り込みイベント処理を行えます。
 
 Webサーバーの停止や再起動のような処理や、Ctrl-Cでプログラムを止める処理などがシグナルの利用例です。
@@ -204,8 +203,6 @@ EC2 AutoScalingのライフサイクルフックやスポットインスタン�
 
 様々なスレッド･プロセスから呼び出されるシグナルハンドラー内の処理には大きな制約があり、この制約が守られないと、今回のregreSSHion(⁠CVE-2024-6387)のようにシグナルハンドラー内で競合状態が発生し、脆弱性に繋がるリスクがあります。
 
-TODO:メモリがうんちゃらとかもう少し追記する
-
 > **Race conditions** frequently occur in signal handlers, since signal handlers support asynchronous actions. These **race conditions** have a variety of root causes and symptoms. Attackers may be able to **exploit a signal handler race condition** to cause the product state to be corrupted, possibly leading to a denial of service or even code execution.
 > 
 > These issues occur when **non-reentrant** functions, or state-sensitive actions occur in the signal handler, where they may be called at any time. These behaviors can violate assumptions being made by the "regular" code that is interrupted, or by other signal handlers that may also be invoked. If these functions are called at an inopportune moment - such as while a **non-reentrant** function is already running - memory corruption could occur that may be **exploitable for code execution**.
@@ -230,6 +227,9 @@ TODO:メモリがうんちゃらとかもう少し追記する
 `$ man 7 signal-safety` を読んでみましょう。`man` ページの冒頭を引用します。
 
 > An  async-signal-safe  function  is one that can be safely called from within a signal handler.  Many functions are not async-signal-safe.  In particular, nonreentrant functions are generally unsafe to call from a signal handler.
+
+
+
 
 参考
 

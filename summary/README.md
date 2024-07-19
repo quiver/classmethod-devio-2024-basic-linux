@@ -2,12 +2,6 @@
 
 regreSSHion を切り口にLinuxの世界に足を踏み入れました。
 
-regreSSHion ブログの脆弱性の概要を再掲します。
-
-> The vulnerability, which is a **signal handler race condition** in **OpenSSH’s server (sshd)**, allows unauthenticated remote code execution (RCE) as **root** on **glibc-based** Linux systems; that presents a significant security risk. This **race condition** affects **sshd** in its default configuration.
->
-> [regreSSHion: Remote Unauthenticated Code Execution Vulnerability in OpenSSH server \| Qualys Security Blog](https://blog.qualys.com/vulnerabilities-threat-research/2024/07/01/regresshion-remote-unauthenticated-code-execution-vulnerability-in-openssh-server)
-
 - シグナルハンドラーのレースコンディション
 - sshd(SSHサーバー)
 - root権限
@@ -15,7 +9,20 @@ regreSSHion ブログの脆弱性の概要を再掲します。
 
 これらキーワードへの理解は深まったでしょうか?
 
-## 脆弱性のミニマルパッチを振り返る
+regreSSHion ブログの脆弱性の概要を再掲します。
+
+> The vulnerability, which is a **signal handler race condition** in **OpenSSH’s server (sshd)**, allows unauthenticated remote code execution (RCE) as **root** on **glibc-based** Linux systems; that presents a significant security risk. This **race condition** affects **sshd** in its default configuration.
+>
+> [regreSSHion: Remote Unauthenticated Code Execution Vulnerability in OpenSSH server \| Qualys Security Blog](https://blog.qualys.com/vulnerabilities-threat-research/2024/07/01/regresshion-remote-unauthenticated-code-execution-vulnerability-in-openssh-server)
+
+`SIGTERM` などのシグナルをハンドリングするシグナル・ハンドラーの実装では、`printf()` 関数などは使えず、非同期シグナル安全な関数のみ呼び出せるなど、制約が多いです。
+
+sshd では、クライアントの認証時に `SIGALRM` タイマーで試行時間を制御し、**glibc** を使うLinux環境のシグナルハンドラー内では、内部的に `malloc()`/`free()` を呼び出す `syslog()` が使われていました。
+
+複数の SSH 接続を試み(**レースコンディション**)、タイムアウトを発生させ、シグナルハンドラー内の `malloc()` 呼び出しに別の非同期シグナルからうまく割り込むことで、ヒープを不正な状態にし、**リモートコード実行(RCE)**できました。
+
+認証できていないため、冒頭の概要にあるように *unauthenticated* なRCEです。
+
 
 この脆弱性を修正したエンジニアは、[脆弱性を回避するミニマルなパッチを提供しています](https://marc.info/?l=oss-security&m=171982317624594)
 
@@ -42,11 +49,15 @@ index 9fc1a2e2e..191ff4a5a 100644
  }
 ```
 
-OpenBSD(Linuxとは別のUNIX系OS)のように、シグナルハンドラー内で再入可能な`syslog` 関数(`syslog_r`)が使われている場合のみ、ログ出力しています。このミニマルパッチを適用後も、OpenBSDでの挙動は変わりません。
+OpenBSD(Linuxとは別のUNIX系OS)のように、シグナルハンドラー内で再入可能な`syslog`関数(`syslog_r`など)が使われている場合のみ、ログ出力します。このミニマルパッチを適用後も、OpenBSDでの挙動は変わりません。
 
-一方で、 `glibc` (を使っているLinux OS)ではそのような関数は定義されておらず、再入可能でない `syslog` 関数がシグナルハンドラー内で呼ばれて脆弱性の温床になっていたため、そのような関数を呼ばなくしているのがミニマルパッチです。
+2006年にも類似の脆弱性があり([CVE-2006-5051](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-5051))、その際は、安全な `syslog()` 関数がある場合のみログ出力する判定(`#ifdef DO_LOG_SAFE_IN_SIGHAND`) が追加されました。
 
-※ 細かく言うと、`syslog_r` は ISOが定めるCの標準ライブラリには含まれていません
+その後、2020年のリファクタリングの際に、誤ってこの判定が除外されてしまい、CVE-2006-5051 のバグが再発するようになっていました(再帰バグ=regression)。
+
+以上が CVE-2024-6387(regreSSHion) のあらましです。
+
+
 
 ## 次のステップ
 

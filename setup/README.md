@@ -17,7 +17,6 @@
 
 クラウド(AWS)で実行されるVS Codeのようなものです。
 
-
 ## AWS コンソールログイン手順
 
 1. 指定のURLでAWSコンソールにアクセス
@@ -36,11 +35,20 @@
     - プラットフォーム : Ubuntu Server 22.04 LTS
     - 接続 : AWS Systems Manager (SSM)
 
-## Cloud9 のターミナルからワークショップコンテンツをGit Clone
+## オプション : ワークショップコンテンツをGitHub から取得
+
+サンプルコードや本ワークショップははGitHubで管理されています。
+
+サンプルコードをIDEから書かずにすることも可能です。
 
 ```
 ~/environment $ git clone https://github.com/quiver/classmethod-devio-2024-basic-linux.git
 ...
 ~/environment $ ls
 README.md  classmethod-devio-2024-basic-linux
+~/environment $ cd classmethod-devio-2024-basic-linux
+~/environment/ classmethod-devio-2024-basic-linux $ ls
+LICENSE           README.md         _includes         process           root              signal            thread
+Q-regreSSHion.jpg _config.yml       library           regresshion       setup             summary
 ```
+
