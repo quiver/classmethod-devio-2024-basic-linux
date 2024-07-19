@@ -9,7 +9,7 @@ regreSSHion を切り口にLinuxの世界に足を踏み入れました。
 
 これらキーワードへの理解は深まったでしょうか?
 
-regreSSHion ブログの脆弱性の概要を再掲します。
+Qualys による regreSSHion ブログの脆弱性の概要を再掲します。
 
 > The vulnerability, which is a **signal handler race condition** in **OpenSSH’s server (sshd)**, allows unauthenticated remote code execution (RCE) as **root** on **glibc-based** Linux systems; that presents a significant security risk. This **race condition** affects **sshd** in its default configuration.
 >
@@ -17,11 +17,11 @@ regreSSHion ブログの脆弱性の概要を再掲します。
 
 `SIGTERM` などのシグナルをハンドリングするシグナル・ハンドラーの実装では、`printf()` 関数などは使えず、非同期シグナル安全な関数のみ呼び出せるなど、制約が多いです。
 
-sshd では、クライアントの認証時に `SIGALRM` タイマーで試行時間を制御し、**glibc** を使うLinux環境のシグナルハンドラー内では、内部的に `malloc()`/`free()` を呼び出す `syslog()` が使われていました。
+SSHプロトコルのサーバーサイドプログラムである **sshd(OpenSSH server)** では、クライアントの認証時に `SIGALRM` タイマーで試行時間を制御し、特に **glibc** を使うLinux環境のシグナルハンドラー内では、内部的に `malloc()`/`free()` を呼び出す `syslog()` が使われていました。
 
-複数の SSH 接続を試み(**レースコンディション**)、タイムアウトを発生させ、シグナルハンドラー内の `malloc()` 呼び出しに別の非同期シグナルからうまく割り込むことで、ヒープを不正な状態にし、**リモートコード実行(RCE)**できました。
+複数の SSH 接続を試み、認証のタイムアウトを発生させ、シグナルハンドラー内の `malloc()` 呼び出しに別の非同期シグナルをうまく割り込ませるなどして、ヒープを不正な状態にすることで(**レースコンディション**)、**リモートコード実行(RCE)** のリスクがあります。
 
-認証できていないため、冒頭の概要にあるように *unauthenticated* なRCEです。
+認証できていないため、*unauthenticated* なRCEです。
 
 
 この脆弱性を修正したエンジニアは、[脆弱性を回避するミニマルなパッチを提供しています](https://marc.info/?l=oss-security&m=171982317624594)
@@ -55,8 +55,7 @@ OpenBSD(Linuxとは別のUNIX系OS)のように、シグナルハンドラー内
 
 その後、2020年のリファクタリングの際に、誤ってこの判定が除外されてしまい、CVE-2006-5051 のバグが再発するようになっていました(再帰バグ=regression)。
 
-以上が CVE-2024-6387(regreSSHion) のあらましです。
-
+以上が [CVE-2024-6387(regreSSHion)](https://nvd.nist.gov/vuln/detail/CVE-2024-6387) のあらましです。
 
 
 ## 次のステップ
