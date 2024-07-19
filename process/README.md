@@ -1,12 +1,10 @@
 # プロセスとは?
 
-> The vulnerability, which is a signal handler race condition in OpenSSH’s server (sshd), allows unauthenticated remote code execution (RCE) as root on glibc-based Linux systems; that presents a significant security risk. This race condition affects sshd in its default configuration.
-
 実行中のプログラムのことをプロセスと呼びます。
 
 Linuxでは `ps` コマンド(`ps`=process status)からプロセス情報を確認できます。
 
-現在ログインしているシェル(=実行中のプログラム)とそのプロセスID(PID)を `$$` 変数から取得します
+現在ログインしているシェル(=実行中のプログラム)とそのプロセスID(PID)を変数 `$$` から取得できます
 
 ```
 $ echo $SHELL
@@ -14,6 +12,8 @@ $ echo $SHELL
 $ echo $$
 1483
 ```
+
+シェルとして Bash がプロセスID 1483 で動いていることがわかります。
 
 ログインユーザー(`ubuntu`)権限で実行されているプロセス一覧を確認します。
 
@@ -198,7 +198,7 @@ Apacheサーバーを起動というように、新規にプロセスを作成�
 
 詳細は『ふつうのLinuxプログラミング 第2版』の 12章「プロセスにかかわるAPI」を参照してください。
 
-- 実装例 https://github.com/satoru-takeuchi/linux-in-practice-2nd/tree/main/02-process-management-1
+- [実装例](https://github.com/satoru-takeuchi/linux-in-practice-2nd/tree/main/02-process-management-1)
 
 Pythonで子プロセスを作成する subprocess ライブラリをLinuxで実行すると、内部的には `fork()/vfork()/posix_spawn()` が呼ばれています。
 

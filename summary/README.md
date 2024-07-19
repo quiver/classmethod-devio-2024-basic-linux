@@ -1,4 +1,4 @@
-## 学んだことを振りかえる
+# まとめ
 
 regreSSHion を切り口にLinuxの世界に足を踏み入れました。
 
@@ -49,14 +49,13 @@ index 9fc1a2e2e..191ff4a5a 100644
  }
 ```
 
-OpenBSD(Linuxとは別のUNIX系OS)のように、シグナルハンドラー内で再入可能な`syslog`関数(`syslog_r`など)が使われている場合のみ、ログ出力します。このミニマルパッチを適用後も、OpenBSDでの挙動は変わりません。
+このパッチを適用すると、OpenBSD(Linuxとは別のUNIX系OS)のように、シグナルハンドラー内で再入可能な`syslog`関数(`syslog_r`など)が使われている場合のみ、ログ出力します。このミニマルパッチを適用後も、OpenBSDでの挙動は変わらず、Linux + glibc のように non-reentrant な `syslog()`を読んでいる場合、ログ出力されなくなります。
 
 2006年にも類似の脆弱性があり([CVE-2006-5051](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2006-5051))、その際は、安全な `syslog()` 関数がある場合のみログ出力する判定(`#ifdef DO_LOG_SAFE_IN_SIGHAND`) が追加されました。
 
 その後、2020年のリファクタリングの際に、誤ってこの判定が除外されてしまい、CVE-2006-5051 のバグが再発するようになっていました(再帰バグ=regression)。
 
 以上が [CVE-2024-6387(regreSSHion)](https://nvd.nist.gov/vuln/detail/CVE-2024-6387) のあらましです。
-
 
 ## 次のステップ
 

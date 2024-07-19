@@ -47,7 +47,7 @@ index 9fc1a2e2e..191ff4a5a 100644
 
 `syslog_r` 関数が定義されている場合のみ `sshlogv` というログ出力する関数を呼び出しています。
 
-OpenSSHの開発母体とも言える、[OpenBSD](https://www.openbsd.org/)というセキュリティを強く意識したBSD系OSではこの `syslog_r` 関数が定義されています。`syslog_r` を[マニュアルを抜粋すると、](https://man.openbsd.org/syslog.3)以下のとおりです。
+OpenSSHの開発母体とも言える、[OpenBSD](https://www.openbsd.org/)というセキュリティを強く意識したBSD系OSではこの `syslog_r` 関数が定義されています。`syslog_r` の[マニュアルを抜粋すると、](https://man.openbsd.org/syslog.3)以下のとおりです。
 
 > The syslog_r() function is a reentrant version of the syslog() function. 
 >
@@ -57,7 +57,7 @@ OpenSSHの開発母体とも言える、[OpenBSD](https://www.openbsd.org/)と�
 >
 > syslog_r() and the other reentrant functions should only be used where reentrancy is required (for instance, in a signal handler). syslog() being not reentrant, only syslog_r() should be used here. For more information about reentrancy and signal handlers, see signal(3).
 
-シグナルハンドラー内では reentrant な syslog 関数が利用されてている場合のみ、ログ出力するように修正しているわけです。
+シグナルハンドラー内では reentrant な `syslog()` 関数が利用されている場合のみ、ログ出力するように修正しているわけです。
 
 ワークショップを終えると、この意味が理解できるようになるはずです。
 
@@ -65,6 +65,7 @@ OpenSSHの開発母体とも言える、[OpenBSD](https://www.openbsd.org/)と�
 
 - [環境セットアップ](setup/README.md)
 - [regreSSHionとは](regresshion/README.md)
+- [SSH](ssh/README.md)
 - [ルート権限](root/README.md)
 - [ライブラリ](library/README.md)
 - [プロセス](process/README.md)

@@ -161,17 +161,17 @@ $ ls -F /proc/1471/task/
 1471/  1475/  1476/  1477/  1480/  1482/  1483/  1486/  1488/  1489/  1491/  1493/  1495/  1497/  1502/  1503/  1505/  1507/  1509/  1510/  1512/  1514/  1516/  1518/  1520/  1522/  1524/
 ```
 
-## スレッド･プロセスとリソース共有
+## スレッドとプロセスのリソース共有の違い
 
-マルチスレッドとマルチプロセスの大きな違いの一つは、マルチスレッドはプロセスを共有するため、メモリなどのリソースをスレッド間で共有できるのに対して、マルチプロセスの場合、プロセス間通信(IPC)で共有する必要があることです。
+マルチスレッドとマルチプロセスの大きな違いの一つは、マルチスレッドは同じプロセスで動作し、メモリなどのリソースをスレッド間で共有できるのに対して、マルチプロセスの場合、プロセス間通信(IPC)で共有する必要があることです。
 
-このスレッドの特性はメリットのようにも見えますが、意図せず共有されることによる難しい不具合を起こしやすく、regreSSHionも広義では同類の脆弱性です。
+このスレッドの特性はメリットのようにも見えますが、意図せず共有されることによる難しい不具合(レースコンディション)も誘発し、regreSSHionの脆弱性も類似です。
 
-プロセス間通信は古くはSystem V IPCというメッセージキュー、セマフォ、共有メモリのAPIがLinux以前のUNIXのころから存在し(System VはUNIXの一種)、Linux時代になって、Posix IPC というきれいなAPIとして整理されました。
+プロセス間通信はSystem V IPCというメッセージキュー、セマフォ、共有メモリのAPIがLinux以前のUNIX時代から存在し(System VはUNIXの一種)、Linux時代になって、Posix IPC というより近代的なAPIとして整理されました。
 
 ## 並行と並列の違い
 
-マルチスレッド・マルチプロセスで処理するときは、平行(Concurrent)と並列(Parallel)の違いを意識する必要があります。
+マルチスレッド・マルチプロセスで処理するときは、**平行(Concurrent)**と**並列(Parallel)**の違いを意識する必要があります。
 
 並列は複数のタスクを同時に実行し、並行は複数のタスクを並列あるいは細切れにいったりきたりしながら(コンテキストスイッチ)実行します。
 
@@ -202,9 +202,9 @@ physical id     : 0
 
 physical idは0しか存在しないため、物理コア数は1、processorは0と1が存在するため、論理コア数は2でSMTが有効とわかります。
 
-SMTが有効で論理コア数が2N個の環境に対して2N並列でそれぞれが100%の負荷をかけると、計算機の並列度は物理コア数と同じN個で2N並行に処理します。
+SMTが有効で論理コア数が2N個の環境に対して2N並列でそれぞれが100%の負荷をかけると、計算機の並列度は物理コア数と同じN個であり、2N並行に処理します。
 
-ARMなAWS GravitonでRDBに上記負荷をかけた例
+Amazon Aurora(AWSの提供するマネージドデータベース)に対して、論理CPU数上限の負荷をかけた時に、SMTのあり(x86)・なし(Arm)でどのような違いがあるか評価した例
 
 [Amazon AuroraがARMベースのGraviton2プロセッサを搭載したインスタンスタイプのプレビューを開始 #reinvent - DevelopersIO](https://dev.classmethod.jp/articles/amazon-aurora-supports-gravition-2-as-public-preview/)
 
@@ -214,4 +214,4 @@ ARMなAWS GravitonでRDBに上記負荷をかけた例
 
 最新のCPU技術の進化に伴い、Intelは次世代CPU「Lunar Lake」から、一部のモデルでSMTを無効化し、シングルスレッドでの性能向上や省電力化にかじを切りました。
 
-[Lion Cove P-core Architecture Explained by Intel Engineer | Talking Tech | Intel Technology - YouTube](https://www.youtube.com/watch?v=7RcEPqn5ejM)
+[Lion Cove P-core Architecture Explained by Intel Engineer \| Talking Tech \| Intel Technology - YouTube](https://www.youtube.com/watch?v=7RcEPqn5ejM)
