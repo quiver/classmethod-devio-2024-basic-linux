@@ -229,11 +229,8 @@ EC2 AutoScalingのライフサイクルフックやスポットインスタン�
 > An  async-signal-safe  function  is one that can be safely called from within a signal handler.  Many functions are not async-signal-safe.  In particular, nonreentrant functions are generally unsafe to call from a signal handler.
 
 
-
-
-参考
+## 参考
 
 - [signal-safety(7) - Linux manual page](https://man7.org/linux/man-pages/man7/signal-safety.7.html)
 - [Nonreentrancy (The GNU C Library)](https://www.gnu.org/software/libc/manual/html_node/Nonreentrancy.html)
 - [CWE - CWE-364: Signal Handler Race Condition (4.14)](https://cwe.mitre.org/data/definitions/364.html)
-- [Unixの歴史 - Wikipedia](https://ja.wikipedia.org/wiki/Unix%E3%81%AE%E6%AD%B4%E5%8F%B2)
