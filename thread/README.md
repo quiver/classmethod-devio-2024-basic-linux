@@ -169,8 +169,6 @@ $ ls -F /proc/1471/task/
 
 プロセス間通信は古くはSystem V IPCというメッセージキュー、セマフォ、共有メモリのAPIがLinux以前のUNIXのころから存在し(System VはUNIXの一種)、Linux時代になって、Posix IPC というきれいなAPIとして整理されました。
 
-蛇足ですが、私がシステムプログラミングの世界に足を踏み入れたきっかけは、Cで書かれたSystem V IPC メッセージキューを使ったプログラムをメンテすることになったことです。
-
 ## 並行と並列の違い
 
 マルチスレッド・マルチプロセスで処理するときは、平行(Concurrent)と並列(Parallel)の違いを意識する必要があります。
@@ -214,6 +212,6 @@ ARMなAWS GravitonでRDBに上記負荷をかけた例
 
 ![](htop.png)
 
-最新のCPU技術の進化に伴い、Intelは次世代CPU「Lunar Lake」から、一部のモデルでSMTを無効化すること発表しました。これは、SMTによるセキュリティ上の懸念や、電力効率の観点からの判断と言われています。
+最新のCPU技術の進化に伴い、Intelは次世代CPU「Lunar Lake」から、一部のモデルでSMTを無効化し、シングルスレッドでの性能向上や省電力化にかじを切りました。
 
-[Why Lunar Lake Won’t Use Hyper-Threading - YouTube](https://www.youtube.com/shorts/FZVUWvOdOdg)
+[Lion Cove P-core Architecture Explained by Intel Engineer | Talking Tech | Intel Technology - YouTube](https://www.youtube.com/watch?v=7RcEPqn5ejM)

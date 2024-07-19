@@ -40,7 +40,7 @@ index 9fc1a2e2e..191ff4a5a 100644
  	sshlogv(file, func, line, showfunc, SYSLOG_LEVEL_FATAL,
  	    suffix, fmt, args);
  	va_end(args);
-+#endif
+ｫ0+#endif
  	_exit(1);
  }
 ```

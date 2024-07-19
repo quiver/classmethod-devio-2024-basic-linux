@@ -53,6 +53,12 @@ GitHub.com のレポジトリでもSSHの公開鍵認証が利用されていま
 
 [About SSH - GitHub Docs](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/about-ssh)
 
+## 認証と regreSSHion の関係
+
+今回の regreSSHionでは、クライアントが接続を試みて、`LoginGraceTime` で指定した一定時間内に認証が成功しないと、 `SIGALRM` という後述するシグナルが非同期によびだされ、そのシグナルハンドラー内の処理に問題がありました。
+
+回避策の一つとして紹介されている `LoginGraceTime=0` は、このログイン試行の機能を無効化し、`SIGALRM` が呼び出されないようにするというものです。
+
 ## コンテナへのシェルアクセス
 
 SSHはサーバーの運用やトラブルシュートなどのために大昔から利用されています。
@@ -76,6 +82,9 @@ $ aws ecs execute-command --cluster cluster-name \
 
 ## 参考
 
+- [openssh.com/txt/release-9.8 リリースノート](https://www.openssh.com/txt/release-9.8)
 - [OpenSSHの脆弱性 CVE-2024-6387についてまとめてみた - piyolog](https://piyolog.hatenadiary.jp/entry/2024/07/02/032122)
+- [OpenSSH Vulnerability: CVE-2024-6387 FAQs and Resources \| Qualys](https://www.qualys.com/regresshion-cve-2024-6387/)
+- [Qualys の CVE-2024-6387 の詳細なレポート](https://www.qualys.com/2024/07/01/cve-2024-6387/regresshion.txt)
 - [OpenSSH本体に取り込まれた脆弱性パッチ](https://github.com/openssh/openssh-portable/commit/81c1099d22b81ebfd20a334ce986c4f753b0db29)
 - [脆弱性のミニマルパッチ](https://marc.info/?l=oss-security&m=171982317624594)
