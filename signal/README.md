@@ -26,6 +26,8 @@ $ kill -signal_number pid
     - プロセスに対して、終了を要求するシグナル。
     - プロセスはこのシグナルを受信すると、通常はクリーンアップを行ってから終了する。
 
+特に、プロセスがどうしても停止しないときは、強制終了する `$ kill -9 PID` を実行しましょう。
+
 ## yes プロセスをシグナルで停止
 
 ターミナルを2つ開き、`yes` プロセスに対して、`SIGTERM` シグナルでプロセスを停止してみます。
@@ -57,6 +59,25 @@ $ cat strace_output.4275
 ```
 
 Ctrl-Cで `SIGINT` シグナルが発火され、`yes` プロセスが停止されてことがわかります。
+
+## Python インタープリターをシグナルで停止
+
+シェルからPythonを起動し、 Ctrl-CとCtrl-Dを行います。
+
+```
+$ python3
+Python 3.9.16 (main, Apr 24 2024, 00:00:00) 
+[GCC 11.4.1 20230605 (Red Hat 11.4.1-2)] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> 
+KeyboardInterrupt
+>>> 
+$
+```
+
+Ctrl-C シグナルに対して `KeyboardInterrupt` というメッセージが表示されますが、インタープリタープロセスは停止していません。シグナルハンドラーでそのように処理しているからです。
+
+一方で Ctrl-D に対しては、通常通り停止します。
 
 ## Apacheのシグナルの利用例
 
